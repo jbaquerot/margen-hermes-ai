@@ -1,0 +1,37 @@
+# Copias originales privadas y diagnósticos del anfitrión
+.local-private/
+*diagnostico*.json
+*diagnostico*.txt
+
+# Credenciales y configuración privada
+.env
+.env.*
+!.env.example
+auth.json
+credentials*.json
+*.pem
+*.key
+
+# Datos personales y estado de ejecución
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+plugin-data/
+exports/
+backups/
+logs/
+*.log
+models/
+.cache/
+
+# Entornos y archivos generados
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+dist/
+build/
+*.egg-info/
+.DS_Store
