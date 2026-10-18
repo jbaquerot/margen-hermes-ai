@@ -1,0 +1,16 @@
+# Install only after isolated validation and local credentials are ready.
+[Unit]
+Description=Hermes Gateway — Margen
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/claw/.hermes/hermes-agent
+ExecStart=/home/claw/.hermes/hermes-agent/venv/bin/python -m hermes_cli.main -p margen gateway run
+Restart=on-failure
+RestartSec=10
+UMask=0077
+
+[Install]
+WantedBy=default.target

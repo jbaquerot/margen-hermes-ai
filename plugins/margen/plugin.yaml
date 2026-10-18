@@ -1,0 +1,21 @@
+name: margen
+version: 0.1.0
+description: Notas personales de lectura con búsqueda local y resúmenes a petición.
+python_dependencies:
+  - onnxruntime>=1.23,<2
+  - tokenizers>=0.21,<1
+  - numpy>=1.26,<3
+provides_tools: []
+provides_hooks: []
+config_schema:
+  allowed_user_id:
+    type: str
+    required: true
+    description: Identificador numérico del único usuario autorizado.
+  allowed_chat_id:
+    type: str
+    required: true
+    description: Identificador numérico de su conversación privada con el bot.
+  model_dir:
+    type: str
+    description: Directorio local de artefactos E5 preparados y verificados.

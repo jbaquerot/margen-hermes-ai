@@ -2,9 +2,9 @@
 
 Perfil personal de Hermes Agent para conservar notas de lectura por Telegram, generar resúmenes a petición y recuperar notas describiendo una idea.
 
-**Estado:** especificaciones, plan y 41 tareas aprobados. Implementación pendiente.
+**Estado:** implementación 0.1.0 disponible para pruebas locales; despliegue en Raspberry pendiente de validación.
 
-## Funcionalidad prevista
+## Funcionalidad implementada
 
 - Varios libros registrados con título y autor y un libro activo para capturar notas.
 - Notas de texto, con o sin `/nota`, confirmación de guardado y referencia estable.
@@ -25,7 +25,7 @@ Perfil personal de Hermes Agent para conservar notas de lectura por Telegram, ge
 
 La edición pública omite nombres personales y detalles de otros perfiles del anfitrión. Conserva las decisiones funcionales y técnicas aprobadas. Los informes de diagnóstico, datos de lectura y credenciales no se publican.
 
-## Arquitectura prevista
+## Arquitectura
 
 - Raspberry Pi 5 con Linux ARM64 y almacenamiento NVMe local.
 - Perfil `margen`, plugin Python, SQLite y bot privado de Telegram.
@@ -33,7 +33,27 @@ La edición pública omite nombres personales y detalles de otros perfiles del a
 - Resúmenes mediante OpenRouter con el modelo especificado en el plan.
 - Supervisión mediante systemd de usuario.
 
-Las versiones, interfaces y modelos indicados en el diseño requieren las pruebas de compatibilidad y calidad descritas en el plan antes del despliegue. El repositorio aún no contiene un bot listo para instalar.
+El núcleo incluye SQLite transaccional, recibos idempotentes, interacciones persistentes, búsqueda local, trabajos de resumen y transporte de Telegram. La prueba local con E5 real recupera 9/10 descripciones entre los cinco primeros; la suite tiene 56 pruebas que pasan en Python 3.11.15 y PTB 22.8. Eso no sustituye la validación del gateway completo, Linux ARM64 y Haiku real.
+
+## Desarrollo
+
+```bash
+python3.11 -m venv .venv
+.venv/bin/python -m pip install -e '.[test]'
+.venv/bin/python -m pytest -q
+```
+
+La búsqueda real necesita preparar sus artefactos y dependencias; las pruebas ordinarias usan dobles locales. No se necesitan tokens para ejecutar la suite.
+
+## Entrega y operación
+
+- [Validación y requisitos](docs/validation.md): pruebas ejecutadas y puertas pendientes.
+- [Contrato Hermes](docs/compatibility.md): interfaces de la revisión objetivo y límites del ensayo.
+- [Evaluación de búsqueda](docs/search-evaluation.md) y [resúmenes](docs/summary-evaluation.md).
+- [Despliegue](docs/deployment.md): preparación aislada, perfil, servicio y reversión.
+- [Operación y recuperación](docs/operations.md): comandos, instantánea consistente y cuarentena.
+
+`python scripts/package-margen.py` genera `dist/margen-0.1.0.tar` y un manifiesto de hashes. No incorpora modelos, bases ni credenciales. No activa ningún servicio.
 
 ## Diagnóstico de despliegue
 

@@ -1,0 +1,14 @@
+# Plantilla: combinar únicamente dentro del perfil margen.
+# Configurar el proveedor y token de Telegram mediante el setup de Hermes.
+model:
+  provider: openrouter
+  default: anthropic/claude-haiku-5.5
+plugins:
+  enabled:
+    - margen
+  entries:
+    margen:
+      settings:
+        allowed_user_id: "REEMPLAZAR_LOCALMENTE"
+        allowed_chat_id: "REEMPLAZAR_LOCALMENTE"
+        model_dir: /home/claw/.hermes/profiles/margen/plugin-data/margen/models/e5

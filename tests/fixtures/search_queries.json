@@ -1,0 +1,48 @@
+{
+  "queries": [
+    {
+      "description": "cómo las rutinas cambian quién soy",
+      "expected": "F01"
+    },
+    {
+      "description": "qué anoté sobre distraerme y volver a concentrarme",
+      "expected": "F07"
+    },
+    {
+      "description": "recuerdo algo sobre dejar de vivir con prisas",
+      "expected": "F13"
+    },
+    {
+      "description": "la idea de admitir fallos para aprender",
+      "expected": "F19"
+    },
+    {
+      "description": "la relación entre recuerdos y contexto",
+      "expected": "F25"
+    },
+    {
+      "description": "es mejor repetir un poco a diario que esforzarse mucho de forma esporádica",
+      "expected": "F02"
+    },
+    {
+      "description": "por qué descansar por la noche ayuda a fijar lo estudiado",
+      "expected": "F08"
+    },
+    {
+      "description": "pasear sin prisa para descubrir el entorno",
+      "expected": "F14"
+    },
+    {
+      "description": "un indicador favorable puede ocultar que no se cumple el objetivo",
+      "expected": "F20"
+    },
+    {
+      "description": "repasar de memoria dejando cada vez más tiempo entre intentos",
+      "expected": "F26"
+    }
+  ],
+  "negative": [
+    "viajes espaciales y órbitas de satélites",
+    "receta de un pastel de chocolate"
+  ]
+}

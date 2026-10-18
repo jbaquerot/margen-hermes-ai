@@ -1,0 +1,124 @@
+{
+  "books": [
+    {
+      "book": "B1",
+      "principal_ideas": [
+        "La identidad se construye mediante hábitos repetidos y decisiones pequeñas.",
+        "Una rutina breve todos los días consolida mejor el hábito que una sesión intensa una vez al mes.",
+        "Dejar el libro sobre la mesa crea una señal visible que facilita comenzar a leer.",
+        "Una recompensa inmediata puede ayudar a repetir una conducta cuyo beneficio llegará mucho después.",
+        "Perder un día no borra el progreso; retomar al siguiente evita convertir la excepción en abandono.",
+        "Cita ficticia de este libro inventado: «El entorno invita antes de que la voluntad decida». Sin página anotada."
+      ],
+      "constraints": [
+        "No atribuir las reflexiones personales al autor.",
+        "No inventar páginas ni citas.",
+        "Seguir el orden de guardado."
+      ],
+      "source_keys": [
+        "F01",
+        "F02",
+        "F03",
+        "F04",
+        "F05",
+        "F06"
+      ]
+    },
+    {
+      "book": "B2",
+      "principal_ideas": [
+        "La atención es limitada: interrumpir una tarea añade un coste al retomarla.",
+        "Dormir después de estudiar favorece consolidar lo aprendido; seguir despierto repasando no siempre ayuda.",
+        "Las notificaciones atraen la mirada aunque no se abra el mensaje. Reflexión personal: silenciar el móvil.",
+        "Reservar un bloque de tiempo para una sola tarea reduce la negociación sobre cuándo empezar.",
+        "El aburrimiento puede dar espacio a una idea propia si no lo llenamos enseguida con estímulos.",
+        "Reflexión personal: unas interrupciones ayudan a descansar y otras me dispersan; no son equivalentes."
+      ],
+      "constraints": [
+        "No atribuir las reflexiones personales al autor.",
+        "No inventar páginas ni citas.",
+        "Seguir el orden de guardado."
+      ],
+      "source_keys": [
+        "F07",
+        "F08",
+        "F09",
+        "F10",
+        "F11",
+        "F12"
+      ]
+    },
+    {
+      "book": "B3",
+      "principal_ideas": [
+        "La contemplación ofrece una pausa frente a la urgencia constante.",
+        "Caminar despacio permite advertir detalles del barrio que desaparecen cuando solo busco llegar.",
+        "Lo urgente reclama respuesta inmediata, pero lo importante puede necesitar una espera deliberada.",
+        "El tiempo libre no necesita justificarse con un resultado productivo.",
+        "El silencio compartido puede expresar compañía sin necesidad de palabras.",
+        "Reflexión personal: ayer anoté que toda pausa calma; hoy una pausa me inquietó. Conservar ambas experiencias."
+      ],
+      "constraints": [
+        "No atribuir las reflexiones personales al autor.",
+        "No inventar páginas ni citas.",
+        "Seguir el orden de guardado."
+      ],
+      "source_keys": [
+        "F13",
+        "F14",
+        "F15",
+        "F16",
+        "F17",
+        "F18"
+      ]
+    },
+    {
+      "book": "B4",
+      "principal_ideas": [
+        "Reconocer un error permite revisar una hipótesis en vez de defenderla por orgullo.",
+        "Una métrica que sube no demuestra que haya mejorado aquello que realmente queríamos conseguir.",
+        "Una decisión reversible admite un ensayo pequeño; una irreversible merece más comprobaciones previas.",
+        "La frecuencia habitual de un suceso aporta contexto antes de valorar un caso llamativo.",
+        "Buscar un contraejemplo ayuda a poner a prueba una explicación que me resulta atractiva.",
+        "Registrar antes qué esperaba permite comparar después la predicción con el resultado sin reescribir el recuerdo."
+      ],
+      "constraints": [
+        "No atribuir las reflexiones personales al autor.",
+        "No inventar páginas ni citas.",
+        "Seguir el orden de guardado."
+      ],
+      "source_keys": [
+        "F19",
+        "F20",
+        "F21",
+        "F22",
+        "F23",
+        "F24"
+      ]
+    },
+    {
+      "book": "B5",
+      "principal_ideas": [
+        "Recordar una conversación exige contexto, no solo palabras aisladas.",
+        "Volver a intentar recordar algo con intervalos crecientes ayuda más que releerlo varias veces seguidas.",
+        "Escribir tras una charla revela lagunas que no había advertido mientras escuchaba.",
+        "Intentar recuperar una idea sin mirar el texto ejercita la memoria de forma distinta a reconocerla al leer.",
+        "Una narración coherente puede incorporar detalles que nunca ocurrieron; seguridad no equivale a exactitud.",
+        "Los recuerdos seleccionan y reconstruyen; dos personas pueden conservar escenas diferentes de una misma tarde."
+      ],
+      "constraints": [
+        "No atribuir las reflexiones personales al autor.",
+        "No inventar páginas ni citas.",
+        "Seguir el orden de guardado."
+      ],
+      "source_keys": [
+        "F25",
+        "F26",
+        "F27",
+        "F28",
+        "F29",
+        "F30"
+      ]
+    }
+  ]
+}
