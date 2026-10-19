@@ -22,6 +22,8 @@ El script `scripts/preflight-container-margen.py` comprueba el registro real de 
 
 Limitaciones observadas: Docker descartó el límite de memoria por falta de soporte/configuración de cgroups; no se considera aplicado. Durante la preparación del modelo apareció un `s6-ftrigrd ... Broken pipe`, seguido de finalización correcta; se conserva como observación, sin atribuirle una causa no comprobada. La configuración Compose se valida localmente; el daemon Docker del equipo de desarrollo no está disponible. Ver `deployment/docker/README.md`.
 
+El primer arranque de canal con `hermes -p margen gateway run --no-supervise -v` fue rechazado por la guarda de gateway compartido antes de conectar Telegram (salida aportada por el usuario). La corrección documentada arranca `-p default` dentro del volumen de laboratorio para servir el perfil `margen`; su ejecución y el despacho real siguen pendientes. El código de la revisión fijada carga plugins y conecta adaptadores secundarios dentro del contexto de cada perfil (`gateway/run_adapters.py`). La plantilla nativa de servicio separado queda marcada como no instalable hasta revisar esa integración.
+
 ## Evidencia ejecutada
 
 | Comprobación | Resultado y límite |

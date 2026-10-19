@@ -2,6 +2,8 @@
 
 Estado: preparado para validación. El repositorio no ha creado perfiles, servicios ni bots en la Raspberry. Antes de activarlo deben cerrarse las verificaciones de `validation.md`.
 
+**Procedimiento nativo bloqueado para la revisión Hermes fijada:** el ensayo Docker confirmó que rechaza un gateway separado con `-p margen`. Las instrucciones de arranque y la unidad por perfil que figuran más abajo son el diseño anterior y no deben ejecutarse ni instalarse hasta revisar la integración con el gateway compartido y la flota existente. La corrección aislada del laboratorio está en `deployment/docker/README.md`; no autoriza migrar los servicios nativos.
+
 ## Preparación aislada
 
 1. Confirmar revisión Hermes objetivo y `/home/claw/.hermes/hermes-agent/venv/bin/python --version`: 3.11.15. No actualizar Hermes ni Python como parte de este procedimiento.

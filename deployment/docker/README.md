@@ -105,15 +105,15 @@ Un resultado `ok: true` permite continuar a las pruebas del canal. No demuestra 
 
 ## Primer arranque y prueba de Telegram
 
-Requisito: preflight `ok: true`, SOUL aplicado y bot exclusivo configurado. El ensayo del canal necesita la configuración base con red; no añadir `compose.offline.yaml` en este paso. El gateway queda como proceso principal, sin redirección a s6, y el contenedor persiste aunque se cierre SSH:
+Requisito: preflight `ok: true`, SOUL aplicado y bot exclusivo configurado. El ensayo del canal necesita la configuración base con red; no añadir `compose.offline.yaml` en este paso. Esta revisión exige arrancar el gateway compartido desde `default`: carga los adaptadores, credenciales y plugins del perfil `margen` en su propio contexto. `default` es el del volumen Docker de laboratorio; no es el Hermes nativo de la Raspberry. El gateway queda en primer plano dentro del contenedor, sin redirección a s6, y el contenedor persiste aunque se cierre SSH:
 
 ```bash
 sudo env MARGEN_LAB_UID="$(id -u)" MARGEN_LAB_GID="$(id -g)" \
   docker compose -f deployment/docker/compose.yaml \
-  run -d --name margen-lab-gateway --pull never -T --interactive=false \
-  hermes -p margen gateway run --no-supervise -v
+  run -d --name margen-lab-host-gateway --pull never -T --interactive=false \
+  hermes -p default gateway run --no-supervise -v
 
-sudo docker logs --follow margen-lab-gateway
+sudo docker logs --follow margen-lab-host-gateway
 ```
 
 `Ctrl+C` termina solo el seguimiento de logs. En Telegram, abrir el bot de pruebas, pulsar Iniciar si procede y enviar `/libros`. En un perfil nuevo se espera `No hay libros registrados` y `Sin libro activo`. Comprobar esa respuesta antes de pasar a capturas, búsqueda y resúmenes. Una respuesta genérica distinta no demuestra funcionamiento del plugin; revisar la conexión y el registro del manejador.
@@ -121,10 +121,12 @@ sudo docker logs --follow margen-lab-gateway
 Para detener solo este gateway de laboratorio:
 
 ```bash
-sudo docker stop margen-lab-gateway
+sudo docker stop margen-lab-host-gateway
 ```
 
-Conservar los contenedores de ensayos si se necesitan sus logs. No usar `--force`, `--replace` ni eliminar huérfanos para eludir una negativa de supervisión: primero diagnosticar si existe otra instancia del mismo bot. El límite de memoria descartado por el anfitrión sigue sin aplicarse.
+El intento anterior con `-p margen` fue rechazado por la guarda de gateway compartido antes de conectar Telegram. Se conserva el contenedor fallido `margen-lab-gateway`; la orden corregida usa otro nombre. El arranque corregido y la respuesta real del bot siguen pendientes de evidencia. No ejecutar esta orden dos veces si ya está funcionando.
+
+Conservar los contenedores de ensayos si se necesitan sus logs. No usar `--force`, `--replace`, `gateway.standalone` ni eliminar huérfanos para eludir una negativa de supervisión. No ejecutar una migración de los servicios nativos como parte de este laboratorio. El límite de memoria descartado por el anfitrión sigue sin aplicarse.
 
 ## Detener y conservar datos
 

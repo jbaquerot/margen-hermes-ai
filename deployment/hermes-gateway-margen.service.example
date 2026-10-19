@@ -1,4 +1,6 @@
-# Install only after isolated validation and local credentials are ready.
+# LEGACY DESIGN: DO NOT INSTALL with the pinned Hermes revision.
+# It rejects per-profile gateways. Native shared-gateway integration is pending;
+# see docs/deployment.md. This template is retained only for design traceability.
 [Unit]
 Description=Hermes Gateway — Margen
 After=network-online.target
