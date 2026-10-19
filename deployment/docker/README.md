@@ -103,6 +103,29 @@ sudo docker inspect --format 'Estado: {{.State.Status}} | Código: {{.State.Exit
 
 Un resultado `ok: true` permite continuar a las pruebas del canal. No demuestra por sí solo entrega real, latencia del bot ni fidelidad de Haiku.
 
+## Primer arranque y prueba de Telegram
+
+Requisito: preflight `ok: true`, SOUL aplicado y bot exclusivo configurado. El ensayo del canal necesita la configuración base con red; no añadir `compose.offline.yaml` en este paso. El gateway queda como proceso principal, sin redirección a s6, y el contenedor persiste aunque se cierre SSH:
+
+```bash
+sudo env MARGEN_LAB_UID="$(id -u)" MARGEN_LAB_GID="$(id -g)" \
+  docker compose -f deployment/docker/compose.yaml \
+  run -d --name margen-lab-gateway --pull never -T --interactive=false \
+  hermes -p margen gateway run --no-supervise -v
+
+sudo docker logs --follow margen-lab-gateway
+```
+
+`Ctrl+C` termina solo el seguimiento de logs. En Telegram, abrir el bot de pruebas, pulsar Iniciar si procede y enviar `/libros`. En un perfil nuevo se espera `No hay libros registrados` y `Sin libro activo`. Comprobar esa respuesta antes de pasar a capturas, búsqueda y resúmenes. Una respuesta genérica distinta no demuestra funcionamiento del plugin; revisar la conexión y el registro del manejador.
+
+Para detener solo este gateway de laboratorio:
+
+```bash
+sudo docker stop margen-lab-gateway
+```
+
+Conservar los contenedores de ensayos si se necesitan sus logs. No usar `--force`, `--replace` ni eliminar huérfanos para eludir una negativa de supervisión: primero diagnosticar si existe otra instancia del mismo bot. El límite de memoria descartado por el anfitrión sigue sin aplicarse.
+
 ## Detener y conservar datos
 
 ```bash

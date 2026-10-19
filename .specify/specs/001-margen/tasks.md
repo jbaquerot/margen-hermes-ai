@@ -291,9 +291,9 @@ Las casillas completadas acreditan implementación y comprobaciones locales de s
 | T018 | Parcial: modelo oficial preparado con hashes, vectores reales y runtime Python 3.11.15; falta Linux ARM64 y contraste de referencia. |
 | T019–T021 | Indexación y búsqueda implementadas, pruebas de vigencia y paginación; evaluación local 9/10. Aceptación en destino depende de T018/T034. |
 | T022–T031 | Adaptador Hermes, resúmenes, exportación y transporte probados con dobles; PTB 22.8 real, sin bot conectado. |
-| T032 | Parcial: registro simulado, análisis de firmas y eventos PTB; falta cargar Hermes completo en aislamiento. |
+| T032 | Parcial: el gestor real de Hermes en Docker ARM64 registra los 17 comandos y la fábrica Telegram; falta verificar despacho con el canal conectado. |
 | T033 | Medición reproducible local y aviso >5 s ensayado; datos reales reservados a T040. |
-| T034 | Parcial: script y resultado macOS ARM64; pendiente Raspberry. |
+| T034 | Parcial: 9/10 en Docker Raspberry Linux ARM64 sin red; preflight con negativas vacías y métricas/versiones recogidas. Faltan vigencia/borrado y concurrencia en destino. |
 | T035 | Rúbrica y casos preparados; inferencia real/revisión humana en T040. |
 | T036–T038 | Instantánea/cuarentena verificadas con datos de prueba y transferencia con montaje simulado; documentación y unidad ilustrativa. SSD real pendiente, sin reparación. |
 | T039 | Parcial: lock, empaquetador y manifiesto; falta validación integrada e instalación limpia en Linux ARM64. |

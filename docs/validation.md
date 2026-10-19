@@ -1,6 +1,6 @@
 # Estado de implementación y validación
 
-Inicio: 2026-10-18; actualización: 2026-10-19. Versión de implementación: 0.1.0; esquema SQLite: 1. Documentos de producto aprobados: 1.0.0. **Laboratorio Docker desplegado en Raspberry; uso personal todavía en validación.**
+Inicio: 2026-10-18; actualización: 2026-10-20. Versión de implementación: 0.1.0; esquema SQLite: 1. Documentos de producto aprobados: 1.0.0. **Laboratorio Docker desplegado en Raspberry; uso personal todavía en validación.**
 
 ## Laboratorio Docker en Raspberry (2026-10-19)
 
@@ -16,9 +16,9 @@ El laboratorio usa la revisión Hermes fijada y un volumen independiente. La ima
 | Proveedor | El asistente guardó OpenRouter, `anthropic/claude-haiku-5.5`, esfuerzo `low`. Falta inferencia real y revisión humana. |
 | Telegram y permisos | Bot de pruebas, allowlist de un único propietario y home channel privado. Permisos propios de Margen guardados y leídos selectivamente; no se publican token ni IDs. |
 | Modelo E5 | Descarga con hashes verificados, salida `0`, ruta dentro del volumen de laboratorio. |
-| Búsqueda real sin red | `compose.offline.yaml` con `network_mode: none`: **9/10, aarch64, salida 0**, informe `plugin-data/margen/validation/search-arm64.json`. Cumple el umbral de recuperación del conjunto fijo en el laboratorio. Métricas, versiones y consultas negativas se revisarán en el preflight. |
+| Búsqueda real sin red | `compose.offline.yaml` con `network_mode: none`: **9/10, aarch64, salida 0**, informe `plugin-data/margen/validation/search-arm64.json`. Cumple el umbral de recuperación del conjunto fijo en el laboratorio. El preflight posterior verificó las dos consultas negativas sin resultados y recogió métricas/versiones. |
 
-El script `scripts/preflight-container-margen.py` comprueba el registro real de los comandos y de la fábrica Telegram en el perfil, compara permisos sin imprimir IDs y recoge versiones/métricas del informe sintético. Puede aplicar el SOUL de Margen guardando el anterior y rechazando sobrescribir una edición posterior. Todavía no se ha ejecutado este preflight en la Raspberry ni se ha probado el canal real.
+El script `scripts/preflight-container-margen.py` comprueba el registro real de los comandos y de la fábrica Telegram en el perfil, compara permisos sin imprimir IDs y recoge versiones/métricas del informe sintético. Puede aplicar el SOUL de Margen guardando el anterior y rechazando sobrescribir una edición posterior. El usuario ejecutó el preflight en la Raspberry: todas las comprobaciones `true`, `soul: applied`, `ok: true`, código `0`. El registro real de los 17 comandos y la fábrica de Telegram está comprobado. Versiones y métricas completas en `docs/docker-preflight-result.json`; sus fechas conservan el UTC observado. Falta arrancar y probar el canal real y ejecutar Haiku.
 
 Limitaciones observadas: Docker descartó el límite de memoria por falta de soporte/configuración de cgroups; no se considera aplicado. Durante la preparación del modelo apareció un `s6-ftrigrd ... Broken pipe`, seguido de finalización correcta; se conserva como observación, sin atribuirle una causa no comprobada. La configuración Compose se valida localmente; el daemon Docker del equipo de desarrollo no está disponible. Ver `deployment/docker/README.md`.
 
@@ -30,7 +30,7 @@ Limitaciones observadas: Docker descartó el límite de memoria por falta de sop
 | Captura, estados y persistencia | Commit/rollback, identidad original, reentrega concurrente, reinicio, lote congelado, versiones y borrado. |
 | Telegram aislado | Objetos Update y filtros PTB reales, transporte simulado, autorización antes de datos y detención del despacho en errores. |
 | Trabajos largos | Prueba controlada de 5,1 s: aviso de progreso y captura concurrente; no se bloquea esperando inferencia. |
-| Búsqueda con artefactos E5 reales | 9/10 local y 9/10 en Docker Linux ARM64 sin red; código 0. Métricas y consultas negativas de Raspberry pendientes de leer. Ver `search-local-result.json` para el ensayo macOS. |
+| Búsqueda con artefactos E5 reales | 9/10 local y 9/10 en Docker Linux ARM64 sin red; código 0. Preflight posterior: ambas negativas vacías, carga 1,997 s y máximo RSS 1.195.552 KiB (aprox. 1,14 GiB). Ver `search-local-result.json` para el ensayo macOS. |
 | Resúmenes | Dobles de proveedor: referencias, orden, fragmentos largos, errores y desactualización. Semántica del modelo real pendiente. |
 | Backup | API SQLite, manifiesto, integridad y cuarentena; montaje ausente aborta. Transferencia de archivos ensayada con sonda de montaje simulada; fallo conserva copia previa. SSD real pendiente. |
 | Dependencias y entrega | Lock con hashes resuelto para Python 3.11/aarch64/glibc 2.28; instalación comprobada en entorno limpio Python 3.11.15 macOS. No demuestra compatibilidad conjunta con Hermes en Linux. |
@@ -64,8 +64,8 @@ Medición local con 100 notas sintéticas: mediana 0,208 ms, p95 0,308 ms, máxi
 ## Puertas pendientes
 
 - T018: probar runtime y artefactos en **Linux aarch64**, sin red durante búsqueda; equivalencia de pooling con referencia del modelo y dependencias del anfitrión.
-- T032: carga integrada del plugin en una raíz Hermes aislada de la revisión objetivo. El contexto simulado no cierra esta puerta.
-- T034: umbral de CC-01 superado en Docker Raspberry (9/10 sin red). Falta recoger métricas/negativas y completar vigencia/borrado, concurrencia y recursos en destino.
+- T032: el gestor real de Hermes registró los 17 comandos y la fábrica Telegram en Docker ARM64. Falta comprobar el despacho durante la conexión del canal real; el contexto simulado por sí solo no cerraba esta puerta.
+- T034: umbral de CC-01 superado en Docker Raspberry (9/10 sin red), negativas y métricas recogidas. Falta completar vigencia/borrado y concurrencia en destino.
 - T039: completar instalación limpia **en destino**, contrato integrado y compatibilidad de todas las dependencias de Hermes. El paquete local y su manifiesto ya se pueden revisar.
 - T040: bot exclusivo, autorización real, OpenRouter/Haiku, revisión humana de CC-02, reinicio de gateway, arranque persistente y CR-01/02.
 - T041: cierre operativo tras esas pruebas. La transferencia y recuperación del SSD externo quedan pendientes mientras no se disponga de montaje válido; su reparación queda fuera del alcance.

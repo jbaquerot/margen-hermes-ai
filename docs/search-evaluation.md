@@ -18,7 +18,7 @@ La primera consulta incluye la indexación inicial de todas las notas; las poste
 
 ## Evidencia de Raspberry y trabajo pendiente — T018/T034
 
-El usuario ejecutó el mismo evaluador en Docker sobre la Raspberry con `network_mode: none`: **9/10; aarch64; salida 0**. Esto supera el umbral del conjunto fijo. El informe completo sigue en el volumen del laboratorio; falta recoger métricas, versiones y consultas negativas.
+El usuario ejecutó el mismo evaluador en Docker sobre la Raspberry con `network_mode: none`: **9/10; aarch64; salida 0**. Esto supera el umbral del conjunto fijo. El informe completo sigue en el volumen del laboratorio. El preflight recoge las métricas y confirma ambas negativas vacías en `docs/docker-preflight-result.json`: Python 3.14.7, ONNX Runtime 1.29.0, tokenizers 0.23.1 y NumPy 2.4.3; carga 1,997 s y RSS máximo 1.195.552 KiB (aprox. 1,14 GiB).
 
 Completar la evaluación en Linux aarch64 con Python 3.11.15, modelo ya preparado y red denegada para el proceso de prueba. Registrar hashes, dependencias, RAM y tiempos. Comprobar captura simultánea durante indexación, notas largas, edición, borrado y notas pendientes. Exigir >=8/10 y referencias correctas, sin sustituir el modelo ni habilitar una búsqueda remota. La evaluación de macOS no cierra este criterio en Raspberry.
 

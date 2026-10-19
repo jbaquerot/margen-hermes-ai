@@ -1,0 +1,57 @@
+{
+  "created_utc": "2026-10-19T21:59:29.847132+00:00",
+  "checks": {
+    "profile_margen": true,
+    "all_17_commands_registered": true,
+    "one_telegram_factory_registered": true,
+    "single_owner_and_private_chat": true,
+    "telegram_allowlist_matches_owner": true,
+    "telegram_home_matches_chat": true,
+    "local_model_path": true,
+    "openrouter_model": true,
+    "search_quality": true,
+    "search_linux_arm64": true,
+    "negative_queries_empty": true
+  },
+  "registered_commands": [
+    "activar",
+    "buscar",
+    "cancelar",
+    "confirmar",
+    "editar",
+    "eliminar",
+    "exportar",
+    "historial",
+    "libro",
+    "libros",
+    "mas",
+    "mover",
+    "nota",
+    "resumen",
+    "resumenes",
+    "ver",
+    "ver_resumen"
+  ],
+  "sqlite": "3.53.1",
+  "fts5": true,
+  "packages": {
+    "onnxruntime": "1.29.0",
+    "tokenizers": "0.23.1",
+    "numpy": "2.4.3",
+    "python-telegram-bot": "22.8",
+    "openai": "2.24.0"
+  },
+  "search": {
+    "hits": 9,
+    "total": 10,
+    "machine": "aarch64",
+    "python": "3.14.7",
+    "load_seconds": 1.9968751419801265,
+    "max_rss_native_units": 1195552,
+    "rss_unit": "bytes on macOS; KiB on Linux",
+    "model_revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3:ca456c06b3a9505ddfd9131408916dd79290368331e7d76bb621f1cba6bc8665"
+  },
+  "soul": "applied",
+  "ok": true,
+  "scope": "registration and local search; real Telegram and Haiku still pending"
+}
