@@ -1,0 +1,4 @@
+# Usar junto a compose.yaml para evaluar la búsqueda sin acceso de red.
+services:
+  hermes:
+    network_mode: none

@@ -49,6 +49,12 @@ services:
         bind:
           create_host_path: false
       - type: bind
+        source: ../../profile/SOUL.md
+        target: /lab/profile/SOUL.md
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
         source: ../search-artifacts.json
         target: /lab/deployment/search-artifacts.json
         read_only: true
