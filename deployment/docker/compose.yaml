@@ -1,0 +1,58 @@
+# Laboratorio: imagen oficial construida desde la revisión aprobada.
+# No montar ~/.hermes del anfitrión ni reutilizar un token de bot activo.
+name: margen-hermes-lab
+services:
+  hermes:
+    image: margen-hermes-lab:22063fc099ec
+    platform: linux/arm64
+    build:
+      context: https://github.com/NousResearch/hermes-agent.git#22063fc099ec9ad8357d7f8f6e6248a0400680d3
+      dockerfile: Dockerfile
+      labels:
+        org.opencontainers.image.revision: 22063fc099ec9ad8357d7f8f6e6248a0400680d3
+    # La entrada oficial configura s6 y baja al usuario hermes.
+    # No sustituirla por un shell ni añadir init:true.
+    command: ["--version"]
+    restart: "no"
+    cpus: 2.0
+    mem_limit: 4g
+    environment:
+      HERMES_UID: "${MARGEN_LAB_UID:-1000}"
+      HERMES_GID: "${MARGEN_LAB_GID:-1000}"
+      HERMES_DASHBOARD: "0"
+      API_SERVER_ENABLED: "false"
+      HERMES_GATEWAY_NO_SUPERVISE: "1"
+    volumes:
+      - data:/opt/data
+      - type: bind
+        source: ../../plugins/margen
+        target: /lab/plugins/margen
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../../tests
+        target: /lab/tests
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../../scripts
+        target: /lab/scripts
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../../pyproject.toml
+        target: /lab/pyproject.toml
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../search-artifacts.json
+        target: /lab/deployment/search-artifacts.json
+        read_only: true
+        bind:
+          create_host_path: false
+volumes:
+  data:

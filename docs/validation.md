@@ -2,6 +2,12 @@
 
 Fecha: 2026-10-18. Versión de implementación: 0.1.0; esquema SQLite: 1. Documentos de producto aprobados: 1.0.0. **Entrega local para pruebas; no desplegada ni validada para uso personal en la Raspberry.**
 
+## Hallazgo posterior: laboratorio Docker (2026-10-19)
+
+Se preparó `deployment/docker/compose.yaml` con el Dockerfile oficial de la misma revisión, volumen exclusivo, sin puertos ni servicios del anfitrión montados. `docker compose config --quiet` valida su estructura; la construcción y ejecución están pendientes porque el daemon Docker local no estaba disponible. Docker y Compose v5.6.0 ya están instalados en la Raspberry; `hello-world` ARM64 funciona según la salida del usuario. La construcción de Hermes sigue pendiente. Ver `deployment/docker/README.md`.
+
+La revisión del Dockerfile y `pyproject.toml` confirmó que la imagen oficial utiliza Python 3.14 y que 3.11 solo es un puente de instalación/actualización, con las dependencias principales excluidas. Las pruebas de dominio que pasaron en 3.11.15 siguen siendo evidencia válida del código de Margen, pero **no acreditan que Hermes completo funcione en un entorno nuevo con 3.11**. El dato del diagnóstico del anfitrión debe contrastarse con el runtime efectivo antes de cerrar T018/T032/T039. El laboratorio Docker no modifica por sí mismo la decisión de despliegue nativo ni el venv existente.
+
 ## Evidencia ejecutada
 
 | Comprobación | Resultado y límite |

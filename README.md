@@ -51,6 +51,7 @@ La búsqueda real necesita preparar sus artefactos y dependencias; las pruebas o
 - [Contrato Hermes](docs/compatibility.md): interfaces de la revisión objetivo y límites del ensayo.
 - [Evaluación de búsqueda](docs/search-evaluation.md) y [resúmenes](docs/summary-evaluation.md).
 - [Despliegue](docs/deployment.md): preparación aislada, perfil, servicio y reversión.
+- [Laboratorio Docker en Raspberry](deployment/docker/README.md): Hermes aislado y diferencia entre runtimes 3.11/3.14.
 - [Operación y recuperación](docs/operations.md): comandos, instantánea consistente y cuarentena.
 
 `python scripts/package-margen.py` genera `dist/margen-0.1.0.tar` y un manifiesto de hashes. No incorpora modelos, bases ni credenciales. No activa ningún servicio.
