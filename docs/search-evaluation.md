@@ -16,9 +16,11 @@ Orden final: coseno >=0,83, FTS5 unicode61 con diacríticos normalizados, palabr
 
 La primera consulta incluye la indexación inicial de todas las notas; las posteriores usan el índice. El RSS es el máximo del proceso y debe leerse con la unidad indicada en el JSON. La telemetría de ONNX Runtime se deshabilita antes de crear la sesión; no hay clientes remotos ni descargas en el código de búsqueda. Las ejecuciones locales se realizaron sin habilitar acceso de red para la inferencia.
 
-## Pendiente en destino — T018/T034
+## Evidencia de Raspberry y trabajo pendiente — T018/T034
 
-Repetir la misma evaluación en Linux aarch64 con Python 3.11.15, modelo ya preparado y red denegada para el proceso de prueba. Registrar hashes, dependencias, RAM y tiempos. Comprobar captura simultánea durante indexación, notas largas, edición, borrado y notas pendientes. Exigir >=8/10 y referencias correctas, sin sustituir el modelo ni habilitar una búsqueda remota. La evaluación de macOS no cierra este criterio en Raspberry.
+El usuario ejecutó el mismo evaluador en Docker sobre la Raspberry con `network_mode: none`: **9/10; aarch64; salida 0**. Esto supera el umbral del conjunto fijo. El informe completo sigue en el volumen del laboratorio; falta recoger métricas, versiones y consultas negativas.
+
+Completar la evaluación en Linux aarch64 con Python 3.11.15, modelo ya preparado y red denegada para el proceso de prueba. Registrar hashes, dependencias, RAM y tiempos. Comprobar captura simultánea durante indexación, notas largas, edición, borrado y notas pendientes. Exigir >=8/10 y referencias correctas, sin sustituir el modelo ni habilitar una búsqueda remota. La evaluación de macOS no cierra este criterio en Raspberry.
 
 ```bash
 python scripts/evaluate-search.py /ruta/modelo-e5 --output /ruta/privada/search-arm64.json

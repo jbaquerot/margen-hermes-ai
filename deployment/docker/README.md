@@ -83,6 +83,26 @@ sudo docker inspect --format 'Estado: {{.State.Status}} | Código: {{.State.Exit
 
 Resultado esperado: >=8/10, arquitectura `aarch64`, informe JSON y salida `0`. La puntuación y las consultas negativas deben revisarse en el informe: el código de salida del script por sí solo no certifica CC-01. Si falla, conservar el contenedor y sus logs; no habilitar una alternativa remota. El nombre fijo identifica el primer ensayo: no lanzar otro con el mismo nombre mientras exista ese contenedor.
 
+## Preflight del perfil antes de arrancar el bot
+
+`scripts/preflight-container-margen.py` usa el bootstrap de Hermes para seleccionar sus dependencias y, solo dentro del proceso de prueba, selecciona el perfil `margen`. Comprueba los 17 comandos y la fábrica de Telegram usando las interfaces públicas reales. Verifica allowlist/configuración sin imprimir IDs, recoge versiones y lee las métricas/negativas del informe de búsqueda. SQLite se prueba solo en memoria. No inicia un gateway ni solicita inferencia.
+
+Con `--apply-soul`, si pasan las comprobaciones, copia `/lab/profile/SOUL.md` al perfil. Conserva un SOUL anterior en `SOUL.before-margen.md` y rechaza reemplazar una edición posterior. Guarda un informe sin credenciales ni notas en `plugin-data/margen/validation/preflight.json`. Ejecutar con ambos archivos Compose para mantener el proceso sin red:
+
+```bash
+sudo env MARGEN_LAB_UID="$(id -u)" MARGEN_LAB_GID="$(id -g)" \
+  docker compose -f deployment/docker/compose.yaml \
+  -f deployment/docker/compose.offline.yaml \
+  run -d --name margen-lab-preflight --pull never -T --interactive=false \
+  -e PYTHONPATH=/opt/hermes:/opt/data/profiles/margen/plugins/margen \
+  hermes python /lab/scripts/preflight-container-margen.py --apply-soul
+
+sudo docker logs --follow margen-lab-preflight
+sudo docker inspect --format 'Estado: {{.State.Status}} | Código: {{.State.ExitCode}}' margen-lab-preflight
+```
+
+Un resultado `ok: true` permite continuar a las pruebas del canal. No demuestra por sí solo entrega real, latencia del bot ni fidelidad de Haiku.
+
 ## Detener y conservar datos
 
 ```bash

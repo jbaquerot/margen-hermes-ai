@@ -1,22 +1,36 @@
 # Estado de implementación y validación
 
-Fecha: 2026-10-18. Versión de implementación: 0.1.0; esquema SQLite: 1. Documentos de producto aprobados: 1.0.0. **Entrega local para pruebas; no desplegada ni validada para uso personal en la Raspberry.**
+Inicio: 2026-10-18; actualización: 2026-10-19. Versión de implementación: 0.1.0; esquema SQLite: 1. Documentos de producto aprobados: 1.0.0. **Laboratorio Docker desplegado en Raspberry; uso personal todavía en validación.**
 
-## Hallazgo posterior: laboratorio Docker (2026-10-19)
+## Laboratorio Docker en Raspberry (2026-10-19)
 
-Se preparó `deployment/docker/compose.yaml` con el Dockerfile oficial de la misma revisión, volumen exclusivo, sin puertos ni servicios del anfitrión montados. `docker compose config --quiet` valida su estructura; la construcción y ejecución están pendientes porque el daemon Docker local no estaba disponible. Docker y Compose v5.6.0 ya están instalados en la Raspberry; `hello-world` ARM64 funciona según la salida del usuario. La construcción de Hermes ya terminó y el usuario confirmó la ejecución de `hermes --version` en la imagen `ba77c43768f6`: Python 3.14.7, SDK OpenAI 2.24.0, método Docker y banner `vunknown (2026.9.24)`. El perfil `margen` fue creado correctamente en `/opt/data/profiles/margen`, sin alias ni skills. Esto acredita imagen, CLI y creación del perfil, todavía no la carga funcional del plugin ni el gateway. El usuario confirmó después la instalación del plugin, fijado a `e98479f9a444e0e06116f766ae671b4e5aae22b4`, desactivado y sin dependencias (`--no-deps --no-enable`). El listado confirmó `not enabled git pinned@e98479f9 0.1.0 margen`. Plugin Doctor pasó descubrimiento, manifiesto, importación y registro en su entorno aislado, con aviso de que faltan `onnxruntime`, `tokenizers` y `numpy`. Ese entorno usa un perfil temporal y el plugin tiene una guarda de perfil, por lo que el informe no demuestra el registro de los 17 comandos ni el funcionamiento de Telegram. Después, `plugins enable margen` resolvió e instaló dependencias mediante PM y terminó con `Plugin margen enabled`, estado `exited` y código `0`. Esto verifica la admisión conjunta en el laboratorio; todavía faltan versiones efectivas, importaciones y pruebas de búsqueda, configuración de IDs, registro funcional y canal real. El asistente `setup model` confirmó OpenRouter, `anthropic/claude-haiku-5.5` y esfuerzo `low`; la clave fue introducida localmente por el usuario y no forma parte del repositorio. La configuración guardada no demuestra todavía una inferencia real ni su fidelidad. El asistente `setup gateway` confirmó el token de un bot Telegram de pruebas, allowlist de un único propietario y home channel de chat privado. Token e IDs se conservan solo en el laboratorio y no se publican. Los permisos propios de Margen quedaron guardados como cadenas y se verificaron por lectura selectiva. La ruta de búsqueda del contenedor es `/opt/data/profiles/margen/plugin-data/margen/models/e5`; el gateway todavía no se ha arrancado para las pruebas. La descarga de los artefactos fijados finalizó con verificación de hashes y código `0` en la Raspberry. Se observó una línea `s6-ftrigrd: fatal: unable to flush asyncout: Broken pipe`, seguida de la terminación correcta del preparador; esto no demuestra aún carga/inferencia del modelo. La evaluación de búsqueda Linux ARM64 sigue pendiente. Docker descartó el límite de memoria configurado por falta de soporte/cgroups; no se considera aplicado. Ver `deployment/docker/README.md`.
+El laboratorio usa la revisión Hermes fijada y un volumen independiente. La imagen oficial prepara Python 3.14; `pyproject.toml` admite 3.11 únicamente como puente de instalación/actualización. Las pruebas de Margen en 3.11.15 siguen siendo evidencia del dominio, pero no acreditan un Hermes nuevo sobre ese runtime. El laboratorio no modifica el venv nativo ni cambia automáticamente el objetivo de despliegue aprobado.
 
-La revisión del Dockerfile y `pyproject.toml` confirmó que la imagen oficial utiliza Python 3.14 y que 3.11 solo es un puente de instalación/actualización, con las dependencias principales excluidas. Las pruebas de dominio que pasaron en 3.11.15 siguen siendo evidencia válida del código de Margen, pero **no acreditan que Hermes completo funcione en un entorno nuevo con 3.11**. El dato del diagnóstico del anfitrión debe contrastarse con el runtime efectivo antes de cerrar T018/T032/T039. El laboratorio Docker no modifica por sí mismo la decisión de despliegue nativo ni el venv existente.
+| Comprobación aportada por el usuario | Evidencia |
+| --- | --- |
+| Docker y Compose | `hello-world` ARM64 correcto; Compose v5.6.0. |
+| Imagen y CLI Hermes | Imagen `ba77c43768f6`; Python 3.14.7, SDK OpenAI 2.24.0, método Docker y banner `vunknown (2026.9.24)`. |
+| Perfil | `margen` creado en `/opt/data/profiles/margen`, sin alias ni skills. |
+| Plugin instalado | Fuente fijada a `e98479f9a444e0e06116f766ae671b4e5aae22b4`. Instalación inicial desactivada y sin dependencias; Plugin Doctor pasó sus comprobaciones básicas en un perfil temporal. Su guarda de perfil impide interpretar ese resultado como prueba de los 17 comandos. |
+| Dependencias admitidas | PM resolvió e instaló las dependencias; `Plugin margen enabled`, salida `0`; el siguiente arranque seleccionó el entorno `current`. |
+| Proveedor | El asistente guardó OpenRouter, `anthropic/claude-haiku-5.5`, esfuerzo `low`. Falta inferencia real y revisión humana. |
+| Telegram y permisos | Bot de pruebas, allowlist de un único propietario y home channel privado. Permisos propios de Margen guardados y leídos selectivamente; no se publican token ni IDs. |
+| Modelo E5 | Descarga con hashes verificados, salida `0`, ruta dentro del volumen de laboratorio. |
+| Búsqueda real sin red | `compose.offline.yaml` con `network_mode: none`: **9/10, aarch64, salida 0**, informe `plugin-data/margen/validation/search-arm64.json`. Cumple el umbral de recuperación del conjunto fijo en el laboratorio. Métricas, versiones y consultas negativas se revisarán en el preflight. |
+
+El script `scripts/preflight-container-margen.py` comprueba el registro real de los comandos y de la fábrica Telegram en el perfil, compara permisos sin imprimir IDs y recoge versiones/métricas del informe sintético. Puede aplicar el SOUL de Margen guardando el anterior y rechazando sobrescribir una edición posterior. Todavía no se ha ejecutado este preflight en la Raspberry ni se ha probado el canal real.
+
+Limitaciones observadas: Docker descartó el límite de memoria por falta de soporte/configuración de cgroups; no se considera aplicado. Durante la preparación del modelo apareció un `s6-ftrigrd ... Broken pipe`, seguido de finalización correcta; se conserva como observación, sin atribuirle una causa no comprobada. La configuración Compose se valida localmente; el daemon Docker del equipo de desarrollo no está disponible. Ver `deployment/docker/README.md`.
 
 ## Evidencia ejecutada
 
 | Comprobación | Resultado y límite |
 | --- | --- |
-| Suite Python 3.11.15 + PTB 22.8 | 56 pruebas pasan, incluida inspección AST de la revisión Hermes objetivo. macOS ARM64, entorno temporal independiente. |
+| Suite Python 3.11.15 + PTB 22.8 | 57 pruebas pasan, incluida inspección AST de la revisión Hermes objetivo. macOS ARM64, entorno temporal independiente. |
 | Captura, estados y persistencia | Commit/rollback, identidad original, reentrega concurrente, reinicio, lote congelado, versiones y borrado. |
 | Telegram aislado | Objetos Update y filtros PTB reales, transporte simulado, autorización antes de datos y detención del despacho en errores. |
 | Trabajos largos | Prueba controlada de 5,1 s: aviso de progreso y captura concurrente; no se bloquea esperando inferencia. |
-| Búsqueda con artefactos E5 reales | 9/10 entre primeros cinco; ambas consultas negativas sin resultados. Ver `search-local-result.json`. Validación Linux/Raspberry pendiente. |
+| Búsqueda con artefactos E5 reales | 9/10 local y 9/10 en Docker Linux ARM64 sin red; código 0. Métricas y consultas negativas de Raspberry pendientes de leer. Ver `search-local-result.json` para el ensayo macOS. |
 | Resúmenes | Dobles de proveedor: referencias, orden, fragmentos largos, errores y desactualización. Semántica del modelo real pendiente. |
 | Backup | API SQLite, manifiesto, integridad y cuarentena; montaje ausente aborta. Transferencia de archivos ensayada con sonda de montaje simulada; fallo conserva copia previa. SSD real pendiente. |
 | Dependencias y entrega | Lock con hashes resuelto para Python 3.11/aarch64/glibc 2.28; instalación comprobada en entorno limpio Python 3.11.15 macOS. No demuestra compatibilidad conjunta con Hermes en Linux. |
@@ -51,9 +65,9 @@ Medición local con 100 notas sintéticas: mediana 0,208 ms, p95 0,308 ms, máxi
 
 - T018: probar runtime y artefactos en **Linux aarch64**, sin red durante búsqueda; equivalencia de pooling con referencia del modelo y dependencias del anfitrión.
 - T032: carga integrada del plugin en una raíz Hermes aislada de la revisión objetivo. El contexto simulado no cierra esta puerta.
-- T034: repetir CC-01 en Raspberry, >=8/10, referencias verificadas y recursos sin interferir con los otros perfiles.
+- T034: umbral de CC-01 superado en Docker Raspberry (9/10 sin red). Falta recoger métricas/negativas y completar vigencia/borrado, concurrencia y recursos en destino.
 - T039: completar instalación limpia **en destino**, contrato integrado y compatibilidad de todas las dependencias de Hermes. El paquete local y su manifiesto ya se pueden revisar.
 - T040: bot exclusivo, autorización real, OpenRouter/Haiku, revisión humana de CC-02, reinicio de gateway, arranque persistente y CR-01/02.
 - T041: cierre operativo tras esas pruebas. La transferencia y recuperación del SSD externo quedan pendientes mientras no se disponga de montaje válido; su reparación queda fuera del alcance.
 
-No hay acceso remoto a la Raspberry ni credenciales en esta sesión. No se han instalado perfiles, modificado servicios ni ejecutado inferencia remota. Las limitaciones se mantienen visibles en la lista de tareas.
+No hay acceso remoto a la Raspberry ni credenciales en esta sesión. El usuario ha creado el perfil de laboratorio y configurado proveedor/canal mediante los comandos indicados; no se ha probado todavía inferencia de resumen ni el bot real. El Hermes nativo y sus servicios permanecen fuera de este procedimiento. Las limitaciones se mantienen visibles en la lista de tareas.

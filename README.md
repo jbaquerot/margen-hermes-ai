@@ -33,7 +33,7 @@ La edición pública omite nombres personales y detalles de otros perfiles del a
 - Resúmenes mediante OpenRouter con el modelo especificado en el plan.
 - Supervisión mediante systemd de usuario.
 
-El núcleo incluye SQLite transaccional, recibos idempotentes, interacciones persistentes, búsqueda local, trabajos de resumen y transporte de Telegram. La prueba local con E5 real recupera 9/10 descripciones entre los cinco primeros; la suite tiene 56 pruebas que pasan en Python 3.11.15 y PTB 22.8. Eso no sustituye la validación del gateway completo, Linux ARM64 y Haiku real.
+El núcleo incluye SQLite transaccional, recibos idempotentes, interacciones persistentes, búsqueda local, trabajos de resumen y transporte de Telegram. La prueba local con E5 real recupera 9/10 descripciones entre los cinco primeros; la suite tiene 57 pruebas que pasan en Python 3.11.15 y PTB 22.8. Eso no sustituye la validación del gateway completo, Linux ARM64 y Haiku real.
 
 ## Desarrollo
 
