@@ -68,7 +68,7 @@ Medición local con 100 notas sintéticas: mediana 0,208 ms, p95 0,308 ms, máxi
 ## Puertas pendientes
 
 - T018: probar runtime y artefactos en **Linux aarch64**, sin red durante búsqueda; equivalencia de pooling con referencia del modelo y dependencias del anfitrión.
-- T032: el gestor real de Hermes registró los 17 comandos y la fábrica Telegram en Docker ARM64. Falta comprobar el despacho durante la conexión del canal real; el contexto simulado por sí solo no cerraba esta puerta.
+- T032: el gestor real de Hermes registró los 17 comandos y la fábrica Telegram en Docker ARM64. El despacho real está confirmado para registro, activación, captura, listado, búsqueda, resúmenes, edición, historial y exportación; falta completar el resto de comandos y situaciones de error. El contexto simulado por sí solo no cerraba esta puerta.
 - T034: umbral de CC-01 superado en Docker Raspberry (9/10 sin red), negativas y métricas recogidas. Falta completar vigencia/borrado y concurrencia en destino.
 - T039: completar instalación limpia **en destino**, contrato integrado y compatibilidad de todas las dependencias de Hermes. El paquete local y su manifiesto ya se pueden revisar.
 - T040: bot exclusivo, autorización real, OpenRouter/Haiku, revisión humana de CC-02, reinicio de gateway, arranque persistente y CR-01/02.
@@ -79,3 +79,16 @@ No hay acceso remoto a la Raspberry ni credenciales en esta sesión. El usuario 
 ## Recorrido inicial de captura y resumen (2026-10-20)
 
 El usuario confirmó mediante respuestas del bot: registro de un libro ficticio sin activación automática, activación explícita, dos notas con referencias distintas (texto libre y `/nota`) y listado del libro activo. Después recibió `/resumen` y `/resumen detallado`, con referencias R distintas, fecha y modalidad correctas, estado actualizado y las dos fuentes en orden. Ambos textos conservan las dos ideas sobre constancia y entorno sin añadir hechos externos. El adaptador de producción exige respuesta OpenRouter del modelo aprobado y no incluye una alternativa de resumen local. Esta es evidencia del recorrido real, no de toda la rúbrica: dos frases no permiten evaluar síntesis extensa, contradicciones, citas ni una diferencia sustancial entre modalidades. No se registran IDs de usuario, credenciales ni el contenido de notas personales.
+
+## Búsqueda, dos libros, versiones y exportación (2026-10-20)
+
+Evidencia aportada por el usuario en Telegram, con datos ficticios:
+
+- Dos consultas por descripción recuperan las notas esperadas. La consulta sobre entorno devuelve esa nota primero; la consulta sobre repetición devuelve únicamente la nota correspondiente.
+- Registrar un segundo libro no cambia el activo; activarlo asigna la siguiente nota al segundo libro. Una búsqueda recupera la nota del primero aunque esté activo el segundo.
+- El resumen del segundo libro incluye exclusivamente su nota. Al reactivar el primero, se conservan sus resúmenes breve y detallado.
+- Editar una nota conserva la versión original y muestra la segunda como vigente en `/historial`. Ambos resúmenes previos quedan desactualizados sin regeneración automática.
+- `/ver_resumen` conserva el texto antiguo y advierte de la desactualización. Un nuevo `/resumen` incorpora el matiz editado, conserva ambas fuentes y se presenta actualizado.
+- `/exportar` entregó un Markdown que el usuario descargó y adjuntó. Inspección directa del archivo: título y autor correctos, exactamente las dos notas del primer libro en orden de captura, referencias y fechas de guardado; incluye la versión corregida y excluye la nota del segundo libro. El archivo no se incorpora al repositorio.
+
+Estos casos acreditan los recorridos indicados; siguen pendientes reinicio/persistencia en el canal, movimiento, borrado y cancelación, autorización ajena, concurrencia y evaluación semántica ampliada. No se cierra T040 con estos ensayos parciales.
