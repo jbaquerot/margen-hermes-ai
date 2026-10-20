@@ -32,6 +32,23 @@ class UserError(ValueError):
     """Error funcional seguro para presentar al usuario."""
 
 
+SUMMARY_FAILURE_CODES = frozenset({
+    'summary_json', 'summary_structure', 'summary_sources', 'summary_order',
+    'summary_coverage', 'summary_reduction', 'summary_context',
+    'summary_model_mismatch', 'summary_empty', 'summary_provider',
+})
+
+
+class SummaryFailure(RuntimeError):
+    """Closed diagnostic codes; never carries provider output or note content."""
+
+    def __init__(self, code):
+        if code not in SUMMARY_FAILURE_CODES:
+            raise ValueError('Unknown summary failure code')
+        self.code = code
+        super().__init__(code)
+
+
 @dataclass(frozen=True)
 class Event:
     bot: str

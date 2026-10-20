@@ -1,5 +1,5 @@
 import json
-from .domain import Response, UserError, now, reference, display_date
+from .domain import Response, UserError, SummaryFailure, now, reference, display_date
 from . import books, notes
 
 
@@ -48,11 +48,12 @@ def checked_output(raw, refs):
     raw = raw.strip()
     if raw.startswith('```'):
         raw = raw.split('\n', 1)[1].rsplit('```', 1)[0]
-    def require(condition):
+    def require(condition, code='summary_structure'):
         if not condition:
-            raise ValueError('Respuesta no verificable')
+            raise SummaryFailure(code)
     try:
         data = json.loads(raw)
+        require(isinstance(data, dict))
         sections = data['sections']
         require(isinstance(sections, list) and sections)
         seen, previous, result = set(), -1, []
@@ -61,16 +62,18 @@ def checked_output(raw, refs):
             sources, text = section['sources'], section['text']
             require(isinstance(sources, list) and sources)
             require(isinstance(text, str) and text.strip())
-            require(all(isinstance(r, str) and r in order for r in sources))
+            require(all(isinstance(r, str) and r in order for r in sources), 'summary_sources')
             positions = [order[r] for r in sources]
-            require(positions == sorted(set(positions)) and min(positions) >= previous)
+            require(positions == sorted(set(positions)) and min(positions) >= previous, 'summary_order')
             previous = max(positions)
             seen.update(sources)
             result.append({'sources': sources, 'text': text.strip()})
-        require(seen == set(refs))
+        require(seen == set(refs), 'summary_coverage')
         return result
+    except json.JSONDecodeError as exc:
+        raise SummaryFailure('summary_json') from exc
     except (ValueError, KeyError, TypeError, AssertionError, IndexError) as exc:
-        raise RuntimeError("Resumen rechazado: estructura, cobertura o referencias no verificables.") from exc
+        raise SummaryFailure('summary_structure') from exc
 
 
 async def generate(model, payload):
@@ -102,6 +105,6 @@ async def generate(model, payload):
             checked_output(json.dumps({'sections': outputs}), original_refs)
             return '\n\n'.join(x['text'] for x in outputs)
         if sum(len(x['text']) for x in outputs) >= sum(len(x['text']) for x in items):
-            raise RuntimeError("La síntesis intermedia no reduce el contexto; no se omitieron notas.")
+            raise SummaryFailure('summary_reduction')
         items = outputs
-    raise RuntimeError("Contexto excesivo: no se ha generado un resumen parcial como completo.")
+    raise SummaryFailure('summary_context')

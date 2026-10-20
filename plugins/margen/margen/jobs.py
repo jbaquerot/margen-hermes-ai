@@ -1,7 +1,9 @@
 import asyncio
 from dataclasses import asdict
 import json
-from .domain import Response
+import logging
+import sqlite3
+from .domain import Response, SummaryFailure, SUMMARY_FAILURE_CODES
 from . import summaries, exports, search
 
 
@@ -22,6 +24,7 @@ class Jobs:
                 return Response("Trabajo en curso, interrumpido o fallido. Consulta sus notas y solicita de nuevo la operación.")
             db.execute("UPDATE jobs SET status='running' WHERE id=?", (ident,))
             payload, kind = json.loads(row['payload']), row['kind']
+        stage = 'generate'
         try:
             if kind == 'resumen':
                 if self.model is None:
@@ -36,6 +39,7 @@ class Jobs:
                     result = await asyncio.to_thread(search.search,self.store,self._embedder,owner,payload['query'])
             else:
                 result = exports.render(payload)
+            stage = 'save'
             with self.store.transaction() as db:
                 status = db.execute("SELECT status FROM jobs WHERE id=?", (ident,)).fetchone()[0]
                 if status != 'running':
@@ -45,7 +49,18 @@ class Jobs:
                 # Clear transient snapshots once done. Summary sources live separately.
                 db.execute("UPDATE jobs SET status='completed',payload='{}',result=? WHERE id=?", (json.dumps(asdict(result)),ident))
             return result
-        except Exception:
+        except Exception as exc:
+            code = 'operation_failed'
+            if isinstance(exc, SummaryFailure) and exc.code in SUMMARY_FAILURE_CODES:
+                code = exc.code
+            elif isinstance(exc, TimeoutError):
+                code = 'operation_timeout'
+            elif isinstance(exc, sqlite3.Error):
+                code = 'operation_storage'
+            # Do not log exception messages, tracebacks, IDs, payloads or provider output.
+            safe_kind = kind if kind in ('resumen', 'buscar', 'exportar') else 'other'
+            logging.getLogger('margen').warning(
+                'operation_failed kind=%s stage=%s code=%s', safe_kind, stage, code)
             with self.store.transaction() as db:
-                db.execute("UPDATE jobs SET status='failed',payload='{}',error='operation_failed',result=NULL WHERE id=?", (ident,))
+                db.execute("UPDATE jobs SET status='failed',payload='{}',error=?,result=NULL WHERE id=?", (code,ident))
             return Response("La operación no se ha completado. Las notas guardadas se conservan. Revisa la configuración local o solicita de nuevo la operación; no se considera ausencia de coincidencias.")
