@@ -108,3 +108,9 @@ El usuario ejecutó la corrección con `compose.gateway.yaml`: los logs confirma
 - `/resumenes`: tres resúmenes del primero conservados; el último actualizado y los dos anteriores desactualizados.
 
 Pasa el recorrido de recuperación tras reinicio explícito del contenedor con datos en el volumen de laboratorio. No acredita arranque tras reinicio del anfitrión, recuperación ante corte brusco, reentrega concurrente ni copias externas. La ejecución posterior también cierra la incertidumbre de arranque del archivo supervisado registrada en la incidencia anterior; T040 conserva las demás comprobaciones pendientes.
+
+## Cancelación, borrado y movimiento en Telegram (2026-10-20)
+
+Con la nota ficticia del segundo libro, `/eliminar` mostró el texto y pidió confirmación; `/cancelar` conservó la nota, comprobada con `/ver`. En un segundo intento, `/confirmar` devolvió la eliminación y `/ver` respondió que la nota no existe o fue eliminada. Su resumen anterior siguió consultable con advertencia de desactualización. Una búsqueda por dormir/recuperación/ejercicio no devolvió coincidencias tras el borrado. Este recorrido acredita el comportamiento visible; no equivale a inspección forense del almacenamiento.
+
+`/mover` reasignó la nota sobre el entorno del primero al segundo libro conservando su referencia. `/ver` mostró el segundo libro como propietario de la nota y `/libros` mantuvo activo el primero. Pendiente comprobar con resúmenes nuevos la distribución resultante y completar el resto de escenarios de T040.
