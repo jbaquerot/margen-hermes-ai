@@ -98,3 +98,13 @@ Estos casos acreditan los recorridos indicados; siguen pendientes reinicio/persi
 El usuario reinició `margen-lab-host-gateway` y el bot dejó de responder. Los logs muestran `prior_state=running action=started` para default, dos mensajes de arranque, detección de un gateway existente y apagado de s6. La combinación de orden principal `--no-supervise` y recuperación automática del slot s6 no mantiene abierto el contenedor tras reinicio. Se añade `compose.gateway.yaml` para usar el flujo oficial supervisado: variable de opt-out a `0`, orden `-p default gateway run` y gracia de apagado de 60 s. Se conserva el mismo volumen y el contenedor previo para diagnóstico. Configuración validada estáticamente; recuperación y reinicio reales pendientes del ensayo en Raspberry. El aviso de vida anterior sin cierre limpio no demuestra OOM: el propio log indica `suspected_oom=False`.
 
 Los logs aportados confirman adicionalmente cuatro llamadas reales `plugin_llm.acomplete` de Margen mediante OpenRouter y el modelo aprobado, correspondientes a los resúmenes ya observados. No se publican IDs ni rutas del canal privado.
+
+## Recuperación y reinicio supervisado confirmados (2026-10-20)
+
+El usuario ejecutó la corrección con `compose.gateway.yaml`: los logs confirman supervisión s6 y conexión Telegram en polling. `/libros` recuperó los dos libros ficticios y el primero activo. Posteriormente reinició `margen-lab-supervised-gateway` con un plazo de apagado de 60 segundos y verificó en Telegram:
+
+- `/libros`: ambos libros conservados, primero activo.
+- `/ver`: nota editada conservada con el texto vigente.
+- `/resumenes`: tres resúmenes del primero conservados; el último actualizado y los dos anteriores desactualizados.
+
+Pasa el recorrido de recuperación tras reinicio explícito del contenedor con datos en el volumen de laboratorio. No acredita arranque tras reinicio del anfitrión, recuperación ante corte brusco, reentrega concurrente ni copias externas. La ejecución posterior también cierra la incertidumbre de arranque del archivo supervisado registrada en la incidencia anterior; T040 conserva las demás comprobaciones pendientes.
