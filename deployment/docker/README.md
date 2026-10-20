@@ -105,15 +105,16 @@ Un resultado `ok: true` permite continuar a las pruebas del canal. No demuestra 
 
 ## Primer arranque y prueba de Telegram
 
-Requisito: preflight `ok: true`, SOUL aplicado y bot exclusivo configurado. El ensayo del canal necesita la configuración base con red; no añadir `compose.offline.yaml` en este paso. Esta revisión exige arrancar el gateway compartido desde `default`: carga los adaptadores, credenciales y plugins del perfil `margen` en su propio contexto. `default` es el del volumen Docker de laboratorio; no es el Hermes nativo de la Raspberry. El gateway queda en primer plano dentro del contenedor, sin redirección a s6, y el contenedor persiste aunque se cierre SSH:
+Requisito: preflight `ok: true`, SOUL aplicado y bot exclusivo configurado. El ensayo del canal necesita la configuración base con red; no añadir `compose.offline.yaml` en este paso. Esta revisión exige arrancar el gateway compartido desde `default`: carga los adaptadores, credenciales y plugins del perfil `margen` en su propio contexto. `default` es el del volumen Docker de laboratorio; no es el Hermes nativo de la Raspberry. El archivo `compose.gateway.yaml` habilita la supervisión oficial s6, desactivada en la base para comandos puntuales. s6 gestiona el único gateway; la orden principal permanece abierta como heartbeat. Se conceden 60 segundos al apagado con Compose. El contenedor persiste aunque se cierre SSH:
 
 ```bash
 sudo env MARGEN_LAB_UID="$(id -u)" MARGEN_LAB_GID="$(id -g)" \
   docker compose -f deployment/docker/compose.yaml \
-  run -d --name margen-lab-host-gateway --pull never -T --interactive=false \
-  hermes -p default gateway run --no-supervise -v
+  -f deployment/docker/compose.gateway.yaml \
+  run -d --name margen-lab-supervised-gateway --pull never -T --interactive=false \
+  hermes
 
-sudo docker logs --follow margen-lab-host-gateway
+sudo docker logs --follow margen-lab-supervised-gateway
 ```
 
 `Ctrl+C` termina solo el seguimiento de logs. En Telegram, abrir el bot de pruebas, pulsar Iniciar si procede y enviar `/libros`. En un perfil nuevo se espera `No hay libros registrados` y `Sin libro activo`. Comprobar esa respuesta antes de pasar a capturas, búsqueda y resúmenes. Una respuesta genérica distinta no demuestra funcionamiento del plugin; revisar la conexión y el registro del manejador.
@@ -121,10 +122,10 @@ sudo docker logs --follow margen-lab-host-gateway
 Para detener solo este gateway de laboratorio:
 
 ```bash
-sudo docker stop margen-lab-host-gateway
+sudo docker stop --timeout 60 margen-lab-supervised-gateway
 ```
 
-El intento anterior con `-p margen` fue rechazado por la guarda de gateway compartido antes de conectar Telegram. Se conserva el contenedor fallido `margen-lab-gateway`; la orden corregida usa otro nombre. El usuario confirmó el arranque corregido el 2026-10-20: los logs enumeran `default` y `margen`, y `/libros` recibió `No hay libros registrados.` y `Sin libro activo.` en Telegram. Esto acredita el despacho de ese comando al plugin; captura, resúmenes y reinicio siguen pendientes. No ejecutar esta orden dos veces si ya está funcionando.
+El intento con `-p margen` fue rechazado por la guarda de gateway compartido. El siguiente con `-p default --no-supervise` permitió los recorridos del bot, pero falló al reiniciar: el reconciliador arrancó s6 desde el estado persistido y la orden principal terminó al detectar ese gateway, apagando el contenedor. El archivo de canal corrige esa combinación; su arranque y reinicio están pendientes de evidencia. Antes de usarlo, detener la instancia anterior con `sudo docker stop --timeout 60 margen-lab-host-gateway`. Se conserva ese contenedor para diagnóstico; el nuevo usa el mismo volumen. No iniciar dos instancias que compartan el bot o ese volumen.
 
 Conservar los contenedores de ensayos si se necesitan sus logs. No usar `--force`, `--replace`, `gateway.standalone` ni eliminar huérfanos para eludir una negativa de supervisión. No ejecutar una migración de los servicios nativos como parte de este laboratorio. El límite de memoria descartado por el anfitrión sigue sin aplicarse.
 

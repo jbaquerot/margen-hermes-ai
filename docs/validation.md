@@ -92,3 +92,9 @@ Evidencia aportada por el usuario en Telegram, con datos ficticios:
 - `/exportar` entregó un Markdown que el usuario descargó y adjuntó. Inspección directa del archivo: título y autor correctos, exactamente las dos notas del primer libro en orden de captura, referencias y fechas de guardado; incluye la versión corregida y excluye la nota del segundo libro. El archivo no se incorpora al repositorio.
 
 Estos casos acreditan los recorridos indicados; siguen pendientes reinicio/persistencia en el canal, movimiento, borrado y cancelación, autorización ajena, concurrencia y evaluación semántica ampliada. No se cierra T040 con estos ensayos parciales.
+
+## Incidencia de reinicio del laboratorio (2026-10-20)
+
+El usuario reinició `margen-lab-host-gateway` y el bot dejó de responder. Los logs muestran `prior_state=running action=started` para default, dos mensajes de arranque, detección de un gateway existente y apagado de s6. La combinación de orden principal `--no-supervise` y recuperación automática del slot s6 no mantiene abierto el contenedor tras reinicio. Se añade `compose.gateway.yaml` para usar el flujo oficial supervisado: variable de opt-out a `0`, orden `-p default gateway run` y gracia de apagado de 60 s. Se conserva el mismo volumen y el contenedor previo para diagnóstico. Configuración validada estáticamente; recuperación y reinicio reales pendientes del ensayo en Raspberry. El aviso de vida anterior sin cierre limpio no demuestra OOM: el propio log indica `suspected_oom=False`.
+
+Los logs aportados confirman adicionalmente cuatro llamadas reales `plugin_llm.acomplete` de Margen mediante OpenRouter y el modelo aprobado, correspondientes a los resúmenes ya observados. No se publican IDs ni rutas del canal privado.

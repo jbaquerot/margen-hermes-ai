@@ -1,0 +1,8 @@
+# Canal persistente: s6 es el único supervisor del gateway compartido.
+# Usar junto con compose.yaml; nunca junto con compose.offline.yaml.
+services:
+  hermes:
+    environment:
+      HERMES_GATEWAY_NO_SUPERVISE: "0"
+    command: ["-p", "default", "gateway", "run"]
+    stop_grace_period: 60s
