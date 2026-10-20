@@ -124,7 +124,7 @@ Para detener solo este gateway de laboratorio:
 sudo docker stop margen-lab-host-gateway
 ```
 
-El intento anterior con `-p margen` fue rechazado por la guarda de gateway compartido antes de conectar Telegram. Se conserva el contenedor fallido `margen-lab-gateway`; la orden corregida usa otro nombre. El arranque corregido y la respuesta real del bot siguen pendientes de evidencia. No ejecutar esta orden dos veces si ya está funcionando.
+El intento anterior con `-p margen` fue rechazado por la guarda de gateway compartido antes de conectar Telegram. Se conserva el contenedor fallido `margen-lab-gateway`; la orden corregida usa otro nombre. El usuario confirmó el arranque corregido el 2026-10-20: los logs enumeran `default` y `margen`, y `/libros` recibió `No hay libros registrados.` y `Sin libro activo.` en Telegram. Esto acredita el despacho de ese comando al plugin; captura, resúmenes y reinicio siguen pendientes. No ejecutar esta orden dos veces si ya está funcionando.
 
 Conservar los contenedores de ensayos si se necesitan sus logs. No usar `--force`, `--replace`, `gateway.standalone` ni eliminar huérfanos para eludir una negativa de supervisión. No ejecutar una migración de los servicios nativos como parte de este laboratorio. El límite de memoria descartado por el anfitrión sigue sin aplicarse.
 
