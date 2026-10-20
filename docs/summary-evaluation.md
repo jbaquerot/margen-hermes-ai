@@ -17,4 +17,4 @@ Cada resultado necesita revisión humana:
 
 Una referencia correcta no prueba que la frase esté respaldada. Rechazar un resultado con afirmaciones sin fuente, aunque sus comprobaciones estructurales pasen. Revisar especialmente la última nota en entradas largas y el resultado tras editar mientras se genera.
 
-Estado: rúbrica y generador preparados; ejecución de `anthropic/claude-haiku-5.5` mediante OpenRouter y revisión humana **pendientes de T040**. No se han hecho llamadas facturables ni usado credenciales del usuario.
+Estado: el usuario ejecutó ambos modos en su bot de laboratorio el 2026-10-20 y compartió dos resúmenes correctos de dos notas ficticias. El adaptador exige OpenRouter y el modelo aprobado; las llamadas se ejecutaron en la Raspberry con las credenciales configuradas localmente por el usuario. Cobertura, orden y ausencia de añadidos se cumplen en este caso mínimo. La evaluación ampliada de diez casos y la rúbrica completa siguen **pendientes de T040**; no se considera cerrada la calidad semántica con dos frases.
