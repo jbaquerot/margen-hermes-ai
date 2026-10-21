@@ -1,8 +1,16 @@
 # Despliegue controlado
 
-Estado: preparado para validación. El repositorio no ha creado perfiles, servicios ni bots en la Raspberry. Antes de activarlo deben cerrarse las verificaciones de `validation.md`.
+Estado: laboratorio Docker operativo en Raspberry con pruebas reales de Telegram, OpenRouter, reinicio y recuperación local en cuarentena. El despliegue definitivo y su aceptación siguen pendientes; ver `validation.md`.
 
 **Procedimiento nativo bloqueado para la revisión Hermes fijada:** el ensayo Docker confirmó que rechaza un gateway separado con `-p margen`. Las instrucciones de arranque y la unidad por perfil que figuran más abajo son el diseño anterior y no deben ejecutarse ni instalarse hasta revisar la integración con el gateway compartido y la flota existente. La corrección aislada del laboratorio está en `deployment/docker/README.md`; no autoriza migrar los servicios nativos.
+
+## Propuesta de despliegue definitivo — pendiente de decisión
+
+Se recomienda consolidar Docker, conservando la revisión Hermes fijada, el perfil `margen`, la búsqueda local y el gateway compartido supervisado por s6 que ya se han ensayado. El plan aprobado preveía instalación nativa y systemd por perfil; esa topología requiere revisión por el rechazo de gateways separados en la revisión objetivo. Elegir Docker cambia esa decisión de despliegue, no los requisitos funcionales.
+
+Si se elige Docker, preparar una configuración de servicio estable con política de reinicio, volumen de datos identificado y arranque reproducible; definir el tratamiento de los libros de prueba antes de usar notas personales. Mantener un solo proceso que consulte el token del bot. Conservar una reversión a la configuración probada y verificar el canal tras el cambio. La copia consistente y restauración local ya se ensayaron; la política de copias externas y las pruebas de aceptación aún abiertas deben quedar explícitas. No se activa ese servicio definitivo ni se borra el laboratorio con esta propuesta.
+
+La alternativa nativa exige revisar primero el runtime soportado y la integración del gateway compartido con los servicios existentes. No instalar la plantilla antigua por perfil.
 
 ## Preparación aislada
 

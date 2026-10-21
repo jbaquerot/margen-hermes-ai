@@ -2,7 +2,7 @@
 
 Perfil personal de Hermes Agent para conservar notas de lectura por Telegram, generar resúmenes a petición y recuperar notas describiendo una idea.
 
-**Estado:** implementación 0.1.0 disponible para pruebas locales; despliegue en Raspberry pendiente de validación.
+**Estado:** implementación 0.1.0 probada en laboratorio Docker en Raspberry mediante Telegram y OpenRouter. Copia y restauración local en cuarentena verificadas; despliegue definitivo y aceptación completa pendientes.
 
 ## Funcionalidad implementada
 
@@ -31,9 +31,9 @@ La edición pública omite nombres personales y detalles de otros perfiles del a
 - Perfil `margen`, plugin Python, SQLite y bot privado de Telegram.
 - Búsqueda local con FTS5 y `intfloat/multilingual-e5-small`.
 - Resúmenes mediante OpenRouter con el modelo especificado en el plan.
-- Supervisión mediante systemd de usuario.
+- Laboratorio Docker: gateway compartido supervisado por s6. Despliegue definitivo pendiente de decisión; el diseño nativo anterior requiere revisión.
 
-El núcleo incluye SQLite transaccional, recibos idempotentes, interacciones persistentes, búsqueda local, trabajos de resumen y transporte de Telegram. La prueba local con E5 real recupera 9/10 descripciones entre los cinco primeros; la suite tiene 57 pruebas que pasan en Python 3.11.15 y PTB 22.8. Eso no sustituye la validación del gateway completo, Linux ARM64 y Haiku real.
+El núcleo incluye SQLite transaccional, recibos idempotentes, interacciones persistentes, búsqueda local, trabajos de resumen y transporte de Telegram. La búsqueda E5 recupera 9/10 descripciones entre los cinco primeros tanto localmente como en Docker Linux ARM64 sin red. La suite local tiene 66 pruebas que pasan en Python 3.11.15 y PTB 22.8. El usuario ha verificado recorridos reales de captura, búsqueda, resúmenes, edición, movimiento, borrado, exportación y reinicio. Las limitaciones y pruebas pendientes están en `docs/validation.md`.
 
 ## Desarrollo
 
