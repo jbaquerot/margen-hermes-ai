@@ -21,3 +21,6 @@ Estado: el usuario ejecutó ambos modos en su bot de laboratorio el 2026-10-20 y
 
 
 Repetición del caso de matices (2026-10-21): `/resumen detallado` completó tras un aviso de progreso. Revisión del texto aportado: las tres notas están representadas en orden con las referencias esperadas; mantiene la tensión entre constancia y adaptación, reconoce el equilibrio no explicado y separa la reflexión personal de las afirmaciones atribuidas al autor. Este caso pasa. El intento anterior había fallado sin causa identificada; una repetición correcta no determina esa causa ni acredita fiabilidad sostenida. La rúbrica completa y los diez casos siguen pendientes.
+
+
+Caso de cita ficticia (2026-10-21): con cinco notas, el resumen detallado conserva la cita de prueba, la etiqueta como ficticia y reconoce que no se anotó página. Mantiene la distinción entre afirmaciones atribuidas al autor y las dos reflexiones personales, el orden y las cinco fuentes. Pasa este caso manual; no sustituye la evaluación de contexto largo ni los diez casos de la rúbrica.
