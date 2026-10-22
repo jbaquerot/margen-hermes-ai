@@ -33,7 +33,7 @@ La edición pública omite nombres personales y detalles de otros perfiles del a
 - Resúmenes mediante OpenRouter con el modelo especificado en el plan.
 - Laboratorio Docker: gateway compartido supervisado por s6. Docker aprobado como destino definitivo; servicio definitivo operativo y verificado en Raspberry.
 
-El núcleo incluye SQLite transaccional, recibos idempotentes, interacciones persistentes, búsqueda local, trabajos de resumen y transporte de Telegram. La búsqueda E5 recupera 9/10 descripciones entre los cinco primeros tanto localmente como en Docker Linux ARM64 sin red. La suite local tiene 72 pruebas que pasan en Python 3.11.15 y PTB 22.8. El usuario ha verificado recorridos reales de captura, búsqueda, resúmenes, edición, movimiento, borrado, exportación y reinicio. Las limitaciones y pruebas pendientes están en `docs/validation.md`.
+El núcleo incluye SQLite transaccional, recibos idempotentes, interacciones persistentes, búsqueda local, trabajos de resumen y transporte de Telegram. La búsqueda E5 recupera 9/10 descripciones entre los cinco primeros tanto localmente como en Docker Linux ARM64 sin red. La suite local tiene 79 pruebas que pasan en Python 3.11.15 y PTB 22.8. El usuario ha verificado recorridos reales de captura, búsqueda, resúmenes, edición, movimiento, borrado, exportación y reinicio. Las limitaciones y pruebas pendientes están en `docs/validation.md`.
 
 ## Desarrollo
 

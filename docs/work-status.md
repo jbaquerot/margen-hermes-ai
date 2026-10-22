@@ -4,7 +4,7 @@ Revisión: 2026-10-22. **El trabajo completo no está terminado.** La implementa
 
 | Bloque | Comprobado | Pendiente |
 | --- | --- | --- |
-| Implementación | Libros, activo, notas, referencias, historial, búsqueda local, resúmenes, movimiento, borrado, exportación. 72 pruebas locales pasan. | No equivale a verificar cada requisito con el canal real. |
+| Implementación | Libros, activo, notas, referencias, historial, búsqueda local, resúmenes, movimiento, borrado, exportación. 79 pruebas locales pasan. | No equivale a verificar cada requisito con el canal real. |
 | Integración Raspberry | Docker ARM64, runtime 3.14.7, plugin, Telegram, OpenRouter, Haiku y modelo E5 local. | Resto del contrato integrado y reproducibilidad completa. |
 | Búsqueda | 9/10 en el conjunto fijo sin red; consultas por descripción, entre libros y exclusión de una nota borrada en Telegram. | Referencia de pooling, contexto extenso, paginación y demás casos de vigencia/concurrencia. |
 | Resúmenes | Breve/detallado, alcance por libro, matices, cita ficticia, reflexión personal, fuentes, conservación y desactualización. | Diez casos completos, notas extensas y concurrencia real. El fallo aislado anterior no tiene causa identificada. |
@@ -25,3 +25,7 @@ Revisión: 2026-10-22. **El trabajo completo no está terminado.** La implementa
 T018 (runtime/modelo y referencia), T032 (contrato integrado restante), T034 (búsqueda restante), T039 (reproducibilidad e instalación limpia), T040 (aceptación real) y T041 (cierre de entrega). Las casillas marcadas en `tasks.md` acreditan implementación/comprobaciones descritas, no aceptación operativa total.
 
 La base de evidencia está en `validation.md`; las pruebas de calidad, en `summary-evaluation.md` y `search-evaluation.md`. Los comandos en la Raspberry fueron ejecutados por el usuario y se revisó su salida; esta sesión no accedió remotamente al equipo ni utilizó sus credenciales.
+
+## Retirada de datos ficticios
+
+Se preparó una utilidad de mantenimiento limitada a los tres libros de prueba, con vista previa, copia y confirmación explícita; ver `operations.md`. Su ejecución real sigue pendiente. No se incorporó un comando general de borrado de libros ni se cambiaron los requisitos de Telegram.

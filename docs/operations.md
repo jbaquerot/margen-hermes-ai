@@ -66,3 +66,39 @@ Las versiones con diagnóstico seguro emiten una línea del logger `margen` como
 En el laboratorio se puede filtrar `sudo docker logs --since 5m margen-lab-supervised-gateway 2>&1 | grep -E 'operation_failed|plugin_llm'` inmediatamente después de una prueba. La ventana de tiempo debe incluir el intento. La instrumentación no reconstruye fallos anteriores que solo guardaron el código genérico.
 
 El plugin instalado con `--ref` no cambia con el `git pull` del directorio de laboratorio. Para mover su revisión, usar el instalador oficial `hermes -p margen plugins install jbaquerot/margen-hermes-ai/plugins/margen --force --ref SHA_COMPLETO --yes-deps --enable` dentro del contenedor, sustituyendo el marcador por el commit comprobado. `--force` aquí es la reinstalación del mismo plugin, no una orden del gateway; conserva configuración y `plugin-data`. No usar `--no-deps` al reemplazar un plugin activo. Reiniciar después el contenedor supervisado con 60 segundos de plazo y comprobar el canal antes de repetir la operación. No se requiere reconstruir la imagen ni descargar de nuevo E5 para un cambio de código sin nuevas dependencias.
+
+## Retirar los tres libros ficticios del ensayo
+
+No existe un comando Telegram para eliminar libros completos: `/eliminar` actúa sobre una nota. `scripts/cleanup-test-books.py` es una utilidad de mantenimiento limitada a estas parejas exactas de título/autor:
+
+- Libro de prueba / Autor de prueba.
+- Segundo libro de prueba / Otra autora.
+- Prueba de matices / Autor ficticio.
+
+La vista previa es de solo lectura y muestra cantidades de notas, versiones y resúmenes, sin imprimir textos ni IDs del propietario. Desde el repositorio del anfitrión:
+
+```bash
+sudo docker exec -i --user hermes \
+  -e PYTHONPATH=/opt/hermes:/opt/data/profiles/margen/plugins/margen \
+  margen /opt/hermes/.venv/bin/python - < scripts/cleanup-test-books.py
+```
+
+Revisar la lista y guardar el valor `confirmacion`. Para aplicar, sustituir `TOKEN_REVISADO` por ese valor y ejecutar la siguiente tanda desde el mismo repositorio. Esto interrumpe temporalmente el bot; el contenedor permanece abierto mientras se detiene su gateway compartido. El trap intenta reiniciar el contenedor tanto si la limpieza termina como si falla:
+
+```bash
+bash <<'MARGEN_CLEANUP'
+set -e
+trap 'sudo docker restart --timeout 60 margen >/dev/null' EXIT
+sudo docker exec margen hermes -p default gateway stop
+sudo docker exec -i --user hermes \
+  -e PYTHONPATH=/opt/hermes:/opt/data/profiles/margen/plugins/margen \
+  margen /opt/hermes/.venv/bin/python - --apply TOKEN_REVISADO \
+  < scripts/cleanup-test-books.py
+MARGEN_CLEANUP
+```
+
+La utilidad exige el slot s6 parado, una confirmación que corresponda al estado actual y ausencia de trabajos, aclaraciones o entregas pendientes. Si algo cambia o no puede verificarse, no borra nada. Antes de las mutaciones toma y verifica `current.tar`; un fallo de backup impide el borrado. Las mutaciones se hacen en una única transacción con claves foráneas y comprobación final de integridad.
+
+Se eliminan los libros indicados, sus notas/versiones, embeddings y resúmenes. Se registran las notas borradas en el registro de eliminaciones, se retiran resultados de trabajos que referencian esos datos y se invalida la paginación de búsqueda transitoria. Los demás libros y sus notas/resúmenes se conservan. Si el activo es uno de los libros retirados, queda sin libro activo; no se elige otro silenciosamente. Copias, cuarentenas previas y mensajes ya enviados por Telegram pueden conservar los textos: esta operación no los borra ni promete borrado físico.
+
+Después del reinicio comprobar `/libros`. Si no queda ningún libro, registrar y activar el primero real antes de capturar. No repetir la limpieza con el token anterior si ya cambió el conjunto. No actualizar el plugin ni reconstruir la imagen para usar esta utilidad: se envía el script al intérprete existente por stdin.
