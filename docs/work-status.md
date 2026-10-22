@@ -1,6 +1,6 @@
 # Estado de entrega de Margen
 
-Revisión: 2026-10-22. **El trabajo completo no está terminado.** La implementación 0.1.0 y la preparación del despliegue definitivo están entregadas para revisión; la aceptación operativa continúa abierta. El usuario autorizó Docker como destino definitivo.
+Revisión: 2026-10-22. **El trabajo completo no está terminado.** La implementación 0.1.0 y el despliegue definitivo Docker están entregados y arrancados; la aceptación operativa continúa abierta. El usuario autorizó Docker como destino definitivo.
 
 | Bloque | Comprobado | Pendiente |
 | --- | --- | --- |
@@ -12,16 +12,16 @@ Revisión: 2026-10-22. **El trabajo completo no está terminado.** La implementa
 | Autorización | Restricciones configuradas y pruebas automatizadas. | Ensayo real de otra cuenta: usuario no dispone de ella. |
 | Rendimiento | Aviso real de progreso; mediciones locales del dominio. | Latencia Telegram medida y captura durante inferencia real (CR-01/02). |
 | Recuperación | Snapshot y restauración en cuarentena verificadas en Raspberry, con base activa conservada. | Copia externa al SSD y recuperación ante pérdida del NVMe; no se modifica su montaje. |
-| Docker definitivo | Compose, comprobación de salud, promoción, copia previa, reversión y guía preparados y comprobados localmente. | Ejecutar promoción en Raspberry, verificar daemon al arranque y recorrido Telegram del servicio `margen`. |
+| Docker definitivo | Preflight correcto, daemon enabled, copia previa verificada y promoción ejecutada en Raspberry; contenedor `margen` healthy en 30,8 s. | Recorrido Telegram del servicio definitivo y arranque real tras reinicio del anfitrión (no ejecutado). |
 
 ## Trabajo inmediato
 
-1. En la Raspberry, actualizar el repositorio y ejecutar `python3 scripts/deploy-docker-margen.py --sudo check` y `systemctl is-enabled docker.service`.
-2. Tras pasar las comprobaciones, ejecutar la promoción autorizada siguiendo `deployment/docker/PRODUCTION.md`. Se conservan los datos ficticios y el contenedor de laboratorio detenido.
-3. Recoger la prueba real de estado y Telegram del servicio definitivo y continuar las puertas de aceptación. No marcar T040/T041 cerradas solo por arrancar el contenedor.
+1. Verificar en Telegram `/libros`, una nota existente, `/resumenes` y una captura nueva del servicio definitivo. La promoción ya se ejecutó; no repetir `deploy`.
+2. Registrar esos resultados y completar las puertas de aceptación aún abiertas. No reiniciar el anfitrión como prueba implícita de Docker.
+3. Mantener explícitos los límites de concurrencia real, rendimiento, contexto extenso y copia externa antes de cerrar T040/T041.
 
 ## Tareas que siguen abiertas
 
 T018 (runtime/modelo y referencia), T032 (contrato integrado restante), T034 (búsqueda restante), T039 (reproducibilidad e instalación limpia), T040 (aceptación real) y T041 (cierre de entrega). Las casillas marcadas en `tasks.md` acreditan implementación/comprobaciones descritas, no aceptación operativa total.
 
-La base de evidencia está en `validation.md`; las pruebas de calidad, en `summary-evaluation.md` y `search-evaluation.md`. Esta revisión no ejecutó Docker en la Raspberry ni utilizó credenciales del usuario.
+La base de evidencia está en `validation.md`; las pruebas de calidad, en `summary-evaluation.md` y `search-evaluation.md`. Los comandos en la Raspberry fueron ejecutados por el usuario y se revisó su salida; esta sesión no accedió remotamente al equipo ni utilizó sus credenciales.

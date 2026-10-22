@@ -154,3 +154,9 @@ El usuario autorizó Docker como despliegue definitivo. Plan/tareas/handoff inco
 Comprobaciones locales: **72 pruebas pasan**, incluidas seis pruebas de promoción/reversión con Docker simulado. Compose definitivo se valida con el CLI real; el código de healthcheck distingue estado conectado, Telegram en reintento y fichero ausente mediante estados sintéticos. Estas comprobaciones no son un ensayo del daemon Docker local, que no está disponible, ni ejecutan cambios en Raspberry.
 
 La promoción definitiva, el estado del daemon al arranque y la posterior prueba de Telegram siguen pendientes. No se declara el proyecto terminado. Seis tareas continúan abiertas: T018, T032, T034, T039, T040 y T041. Resumen vigente en `docs/work-status.md`; procedimiento de promoción en `deployment/docker/PRODUCTION.md`.
+
+## Promoción Docker definitiva ejecutada en Raspberry (2026-10-22)
+
+El usuario aportó preflight correcto: imagen ARM64 y UID/GID coinciden con el laboratorio, volumen `margen-hermes-lab_data`; `systemctl is-enabled docker.service` devolvió `enabled`. Ejecutó después `deploy` y `status`: instantánea SQLite local verificada, red `margen_default` creada y contenedor `margen` declarado Healthy a los 30,8 s. El estado posterior muestra `Up ... (healthy)` y ninguna publicación de puertos. La promoción reutilizó la imagen fijada y el volumen existente según el procedimiento; la comprobación de salud acredita proceso operativo, perfil servido y estado Telegram conectado.
+
+El kernel volvió a advertir que no aplica límites de memoria; la advertencia sigue vigente. El daemon habilitado y la política `unless-stopped` están configurados, pero no se ha reiniciado el anfitrión para probar ese arranque. Falta el recorrido de extremo a extremo en Telegram del contenedor definitivo: listado, consulta conservada, resúmenes y captura nueva. El cambio técnico ha terminado correctamente; no cierra toda la aceptación ni la recuperación externa.
