@@ -1,6 +1,6 @@
 # Estado de implementación y validación
 
-Inicio: 2026-10-18; actualización: 2026-10-20. Versión de implementación: 0.1.0; esquema SQLite: 1. Documentos de producto aprobados: 1.0.0. **Laboratorio Docker desplegado en Raspberry; uso personal todavía en validación.**
+Inicio: 2026-10-18; actualización: 2026-10-22. Versión de implementación: 0.1.0; esquema SQLite: 1. Documentos de producto aprobados: 1.0.0. **Laboratorio Docker desplegado en Raspberry; uso personal todavía en validación.**
 
 ## Laboratorio Docker en Raspberry (2026-10-19)
 
@@ -67,9 +67,9 @@ Medición local con 100 notas sintéticas: mediana 0,208 ms, p95 0,308 ms, máxi
 
 ## Puertas pendientes
 
-- T018: probar runtime y artefactos en **Linux aarch64**, sin red durante búsqueda; equivalencia de pooling con referencia del modelo y dependencias del anfitrión.
+- T018: runtime y artefactos probados en Docker **Linux aarch64** sin red; queda contrastar pooling con la referencia del modelo y cerrar la reproducibilidad completa de dependencias.
 - T032: el gestor real de Hermes registró los 17 comandos y la fábrica Telegram en Docker ARM64. El despacho real está confirmado para registro, activación, captura, listado, búsqueda, resúmenes, edición, historial y exportación; falta completar el resto de comandos y situaciones de error. El contexto simulado por sí solo no cerraba esta puerta.
-- T034: umbral de CC-01 superado en Docker Raspberry (9/10 sin red), negativas y métricas recogidas. Falta completar vigencia/borrado y concurrencia en destino.
+- T034: CC-01 superado en Docker Raspberry (9/10 sin red), negativas y métricas recogidas; borrado sin resultados y búsqueda entre libros comprobados. Quedan contexto extenso/paginación, resto de vigencia y concurrencia en destino.
 - T039: completar instalación limpia **en destino**, contrato integrado y compatibilidad de todas las dependencias de Hermes. El paquete local y su manifiesto ya se pueden revisar.
 - T040: bot exclusivo, autorización real, OpenRouter/Haiku, revisión humana de CC-02, reinicio de gateway, arranque persistente y CR-01/02.
 - T041: cierre operativo tras esas pruebas. La transferencia y recuperación del SSD externo quedan pendientes mientras no se disponga de montaje válido; su reparación queda fuera del alcance.
@@ -146,3 +146,11 @@ Tras añadir una quinta nota marcada como cita ficticia y sin página, `/resumen
 El usuario ejecutó `snapshot` y `restore` dentro del contenedor supervisado, como usuario `hermes` y con la base del perfil de laboratorio. La salida confirmó instantánea SQLite creada/verificada y restauración en un directorio nuevo `restore-check-*`, sin activar esa copia. Las funciones verifican hash, esquema, integridad y relaciones; la restauración contrasta el registro de eliminaciones actual, purga estados transitorios y marca los resúmenes desactualizados en la copia. La base activa sigue siendo la original.
 
 Este ensayo acredita copia consistente y preparación de recuperación en cuarentena en el runtime Raspberry/Docker. La copia está en el mismo volumen NVMe: no acredita recuperación tras perder el disco, transferencia al SSD externo ni activación del bot sobre una base restaurada. No se publica la copia ni su contenido. La concurrencia manual anterior volvió a terminar el resumen antes de la nueva nota, por lo que sigue pendiente.
+
+## Revisión de entrega y Docker definitivo (2026-10-22)
+
+El usuario autorizó Docker como despliegue definitivo. Plan/tareas/handoff incorporan la revisión operativa 1.1; Constitución y requisitos permanecen en 1.0. `compose.production.yaml` reutiliza la imagen ARM64 y el volumen externo comprobados, con s6, política `unless-stopped`, gracia de apagado y salud del proceso/perfil/Telegram. El contenedor no monta el repositorio. El script de promoción toma snapshot antes del corte, verifica exclusividad y recupera el laboratorio si falla el arranque y puede garantizar que el reemplazo está parado. No elimina contenedores, volúmenes ni libros de prueba.
+
+Comprobaciones locales: **72 pruebas pasan**, incluidas seis pruebas de promoción/reversión con Docker simulado. Compose definitivo se valida con el CLI real; el código de healthcheck distingue estado conectado, Telegram en reintento y fichero ausente mediante estados sintéticos. Estas comprobaciones no son un ensayo del daemon Docker local, que no está disponible, ni ejecutan cambios en Raspberry.
+
+La promoción definitiva, el estado del daemon al arranque y la posterior prueba de Telegram siguen pendientes. No se declara el proyecto terminado. Seis tareas continúan abiertas: T018, T032, T034, T039, T040 y T041. Resumen vigente en `docs/work-status.md`; procedimiento de promoción en `deployment/docker/PRODUCTION.md`.

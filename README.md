@@ -31,9 +31,9 @@ La edición pública omite nombres personales y detalles de otros perfiles del a
 - Perfil `margen`, plugin Python, SQLite y bot privado de Telegram.
 - Búsqueda local con FTS5 y `intfloat/multilingual-e5-small`.
 - Resúmenes mediante OpenRouter con el modelo especificado en el plan.
-- Laboratorio Docker: gateway compartido supervisado por s6. Despliegue definitivo pendiente de decisión; el diseño nativo anterior requiere revisión.
+- Laboratorio Docker: gateway compartido supervisado por s6. Docker aprobado como destino definitivo; configuración preparada y promoción en Raspberry pendiente.
 
-El núcleo incluye SQLite transaccional, recibos idempotentes, interacciones persistentes, búsqueda local, trabajos de resumen y transporte de Telegram. La búsqueda E5 recupera 9/10 descripciones entre los cinco primeros tanto localmente como en Docker Linux ARM64 sin red. La suite local tiene 66 pruebas que pasan en Python 3.11.15 y PTB 22.8. El usuario ha verificado recorridos reales de captura, búsqueda, resúmenes, edición, movimiento, borrado, exportación y reinicio. Las limitaciones y pruebas pendientes están en `docs/validation.md`.
+El núcleo incluye SQLite transaccional, recibos idempotentes, interacciones persistentes, búsqueda local, trabajos de resumen y transporte de Telegram. La búsqueda E5 recupera 9/10 descripciones entre los cinco primeros tanto localmente como en Docker Linux ARM64 sin red. La suite local tiene 72 pruebas que pasan en Python 3.11.15 y PTB 22.8. El usuario ha verificado recorridos reales de captura, búsqueda, resúmenes, edición, movimiento, borrado, exportación y reinicio. Las limitaciones y pruebas pendientes están en `docs/validation.md`.
 
 ## Desarrollo
 
@@ -51,6 +51,8 @@ La búsqueda real necesita preparar sus artefactos y dependencias; las pruebas o
 - [Contrato Hermes](docs/compatibility.md): interfaces de la revisión objetivo y límites del ensayo.
 - [Evaluación de búsqueda](docs/search-evaluation.md) y [resúmenes](docs/summary-evaluation.md).
 - [Despliegue](docs/deployment.md): preparación aislada, perfil, servicio y reversión.
+- [Despliegue definitivo Docker](deployment/docker/PRODUCTION.md): promoción, operación, actualización y reversión.
+- [Estado de entrega](docs/work-status.md): trabajo verificado y aceptación pendiente.
 - [Laboratorio Docker en Raspberry](deployment/docker/README.md): Hermes aislado y diferencia entre runtimes 3.11/3.14.
 - [Operación y recuperación](docs/operations.md): comandos, instantánea consistente y cuarentena.
 

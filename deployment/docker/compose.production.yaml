@@ -1,0 +1,52 @@
+# Despliegue definitivo aprobado: reutiliza imagen y volumen del laboratorio.
+# No combinar con compose.yaml, compose.gateway.yaml ni compose.offline.yaml.
+name: margen
+services:
+  hermes:
+    container_name: margen
+    image: margen-hermes-lab:22063fc099ec
+    pull_policy: never
+    platform: linux/arm64
+    restart: unless-stopped
+    stop_grace_period: 60s
+    command: ["-p", "default", "gateway", "run"]
+    cpus: 2.0
+    # La Raspberry actual descarta este límite; no se considera aplicado.
+    mem_limit: 4g
+    environment:
+      HERMES_UID: "${MARGEN_UID:-1000}"
+      HERMES_GID: "${MARGEN_GID:-1000}"
+      HERMES_DASHBOARD: "0"
+      API_SERVER_ENABLED: "false"
+      HERMES_GATEWAY_NO_SUPERVISE: "0"
+    volumes:
+      - data:/opt/data
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      # Solo estado operativo; no imprime configuración, notas ni credenciales.
+      test:
+        - CMD
+        - /opt/hermes/.venv/bin/python
+        - -c
+        - |
+          import json, os, pathlib, sys
+          try:
+              state = json.loads(pathlib.Path('/opt/data/gateway_state.json').read_text())
+              assert state.get('gateway_state') in ('running', 'degraded')
+              assert 'margen' in state.get('served_profiles', [])
+              assert state.get('platforms', {}).get('margen:telegram', {}).get('state') == 'connected'
+              os.kill(int(state['pid']), 0)
+          except (OSError, ValueError, KeyError, TypeError, AssertionError):
+              sys.exit(1)
+      interval: 15s
+      timeout: 5s
+      retries: 4
+      start_period: 60s
+volumes:
+  data:
+    external: true
+    name: "${MARGEN_DATA_VOLUME:-margen-hermes-lab_data}"

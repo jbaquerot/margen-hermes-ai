@@ -30,6 +30,9 @@ Al siguiente mensaje autorizado tras arrancar, se reintentan entregas conservada
 
 ## Instantánea actual
 
+Para el despliegue Docker definitivo usar `python3 scripts/deploy-docker-margen.py --sudo backup` desde el repositorio del anfitrión, según `deployment/docker/PRODUCTION.md`. Los scripts directos que siguen requieren un intérprete con el paquete instalado y rutas adaptadas; no son comandos para ejecutar sin cambios en el contenedor definitivo, que no monta el repositorio.
+
+
 Usar el Python que tenga instalado el paquete Margen; no copiar una base abierta y sus WAL mediante rsync como sustituto de una instantánea consistente.
 
 ```bash

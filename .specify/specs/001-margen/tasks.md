@@ -1,11 +1,15 @@
 # Tareas de implementación de Margen
 
-- **Versión:** 1.0.0
+- **Versión:** 1.1.0
 - **Estado:** Aprobado por el usuario — fase Tasks completada
 - **Fecha:** 2026-10-18
 - **Edición pública:** nombres personales e inventario ajeno a Margen omitidos; sin cambios funcionales.
 - **Base:** [Constitución 1.0.0](../../memory/constitution.md), [especificación 1.0.0](spec.md) y [plan técnico 1.0.0](plan.md), aprobados.
 - **Ejecución:** implementación iniciada el 2026-10-18 por autorización del usuario. Evidencia local y puertas de destino en [docs/validation.md](../../../docs/validation.md). El script de diagnóstico es evidencia previa.
+
+## Actualización operativa 1.1 (2026-10-22)
+
+El usuario autorizó Docker como despliegue definitivo. Aplicar la revisión operativa 1.1 de `plan.md`: runtime Docker 3.14.7 y gateway compartido s6; el dominio continúa probado localmente en 3.11.15. Las condiciones de aceptación conservan sus exigencias y las seis casillas abiertas siguen pendientes. `docs/validation.md` recoge la evidencia posterior al inventario inicial.
 
 ## Convenciones y límites
 
@@ -258,20 +262,20 @@ Todas las rutas de archivos indicadas son relativas a la raíz de este proyecto.
 
 - [x] **T038 — Preparar el despliegue y la integración de backup por escrito.**
   - **Depende de:** T030, T032, T036, T037.
-  - **Archivos:** `deployment/hermes-gateway-margen.service.example`, `docs/deployment.md`, `docs/operations.md`.
-  - **Trabajo:** describir perfil nuevo, instalación de extensión, credenciales locales, usuario/chat autorizado, ruta de datos y unidad systemd de usuario `hermes-gateway-margen.service`, con arranque persistente y reinicio tras fallo. Documentar verificación de lingering y ejecución con el venv Python 3.11.15. Preparar la integración de la instantánea en el backup semanal, condicionada a revisar sus fuentes/exclusiones y sin ampliar `--delete` ni crear retención histórica adicional.
+  - **Archivos:** `deployment/docker/compose.production.yaml`, `scripts/deploy-docker-margen.py`, `deployment/docker/PRODUCTION.md`, `docs/deployment.md`, `docs/operations.md`.
+  - **Trabajo:** describir perfil y extensión, credenciales locales, usuario/chat autorizado y volumen persistente; consolidar el laboratorio mediante Compose, s6 y reinicio Docker. Documentar comprobación del daemon al arranque y runtime Docker Python 3.14.7. Preparar la integración de la instantánea en el backup semanal, condicionada a revisar sus fuentes/exclusiones y sin ampliar `--delete` ni crear retención histórica adicional.
   - **Finaliza cuando:** hay pasos reproducibles de instalación, validación y reversión; la incidencia externa del montaje está identificada sin convertirse en tarea de reparación. La plantilla no arranca nada ni incorpora tokens y respeta los demás gateways.
 
 - [ ] **T039 — Empaquetar una entrega reproducible.**
   - **Depende de:** T018, T030, T032, T038.
   - **Archivos:** `requirements-runtime.lock`, `scripts/package-margen.py`, `docs/release-manifest.json`.
-  - **Trabajo:** fijar las dependencias resueltas compatibles con ARM64/Python 3.11 y las revisiones de artefactos; generar paquete y manifiesto con hashes, esquema y revisión Hermes objetivo. Separar código, modelos descargables y datos del usuario.
+  - **Trabajo:** fijar las dependencias resueltas compatibles con el runtime Docker ARM64/Python 3.14.7, conservando el lock 3.11 como evidencia del dominio, y las revisiones de artefactos; generar paquete y manifiesto con hashes, esquema y revisión Hermes objetivo. Separar código, modelos descargables y datos del usuario.
   - **Finaliza cuando:** el paquete se instala en una raíz limpia de prueba, carga con el contrato validado y no contiene bases, notas, credenciales ni cachés personales. El backup del usuario no es un artefacto de distribución.
 
 - [ ] **T040 — Validar el despliegue controlado con el canal real.**
   - **Depende de:** T033, T034, T035, T039.
   - **Archivos de evidencia:** `docs/validation.md`, `docs/summary-evaluation.md`, `docs/deployment.md`.
-  - **Destino futuro:** perfil y bot de prueba en Raspberry; posterior perfil `margen` bajo `/home/claw/.hermes/profiles/margen` y unidad de usuario dedicada.
+  - **Destino futuro:** perfil y bot de prueba en Raspberry; posterior consolidación del mismo perfil en contenedor `margen`, gateway compartido y volumen externo persistente, según el cambio Docker aprobado.
   - **Trabajo:** una vez iniciada la implementación y disponible el despliegue autorizado, verificar token exclusivo y autorización con IDs locales. Probar todos los comandos con notas ficticias, archivo Markdown, respuestas largas, aviso de progreso, recuperación tras reinicio del gateway y arranque persistente. Completar CR-01/02, CC-02 con Haiku real y CC-03. No reiniciar toda la Raspberry sin una autorización de operación que incluya ese efecto sobre otros servicios.
   - **Finaliza cuando:** la evidencia real respalda cada afirmación de funcionamiento y rendimiento. La validación del backup externo se declara pendiente si su montaje sigue sin resolver; no se marca como superada ni se repara dentro de esta tarea. Se deja explícito si el entorno está listo solo para pruebas o para uso personal con recuperación validada.
 
@@ -346,3 +350,4 @@ La suite local usa Python 3.11.15 y PTB 22.8. Los detalles y límites están en 
 | Versión | Fecha | Estado | Cambio |
 | --- | --- | --- | --- |
 | 1.0.0 | 2026-10-18 | Aprobado | el usuario aprueba las 41 tareas y autoriza continuar con Handoff; no se ha iniciado su implementación. |
+| 1.1.0 | 2026-10-22 | Cambio operativo autorizado | T038–T040 adaptadas a Docker definitivo; no se cierran puertas externas pendientes. |

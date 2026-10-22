@@ -1,11 +1,11 @@
 # Handoff de implementación — Margen
 
-- **Versión:** 1.0.0
+- **Versión:** 1.1.0
 - **Estado:** Aprobado por el usuario — fase Handoff completada
 - **Fecha:** 2026-10-18
 - **Edición pública:** nombres personales e inventario ajeno a Margen omitidos; sin cambios funcionales.
 - **Destino:** contexto inicial para Codex o Claude Code en el proyecto Margen.
-- **Situación:** Constitución, especificación, plan y tareas aprobados como versión 1.0.0. Implementación no iniciada.
+- **Situación:** Constitución/especificación 1.0.0; cambio operativo 1.1 autorizado: Docker definitivo. Implementación disponible y ensayada en laboratorio; promoción y aceptación final pendientes.
 
 Este documento puede copiarse como mensaje inicial de una sesión de implementación con acceso al proyecto. Prepararlo no ha ejecutado las instrucciones que siguen. Los cuatro documentos aprobados son la fuente normativa; este resumen no los sustituye.
 
@@ -28,9 +28,7 @@ Lee también las instrucciones locales aplicables del repositorio. Si encuentras
 
 ### 2. Estado real y primer paso
 
-El repositorio contiene los documentos de diseño y [`scripts/diagnostico-margen.sh`](../../../scripts/diagnostico-margen.sh). No hay todavía un plugin Margen implementado, un perfil desplegado ni pruebas del producto superadas.
-
-Empieza por **T001**, comprobando el contrato de extensión de la revisión objetivo de Hermes. El diagnóstico encontró símbolos en sus fuentes y se consultó documentación fijada al commit; eso no demuestra el funcionamiento del futuro plugin. No vuelvas a pedir al usuario los datos del sistema que ya constan en el plan.
+La implementación está disponible, con pruebas locales y recorridos reales en Raspberry/Docker. Leer `docs/validation.md` y `deployment/docker/PRODUCTION.md`; no reiniciar la implementación por T001 ni volver a solicitar inventario ya recogido. El siguiente paso operativo es comprobar y ejecutar la promoción autorizada al contenedor `margen`, conservando el volumen y los datos de prueba. Las tareas de aceptación abiertas siguen pendientes.
 
 Después sigue `tasks.md` por dependencia. `[P]` indica posibilidad de trabajo paralelo sobre archivos independientes, no una obligación de delegación. Solo marca tareas completadas cuando exista la evidencia de su condición de finalización. Si no tienes acceso a la Raspberry o al canal real, completa lo que pueda verificarse en aislamiento y deja las comprobaciones de destino pendientes de forma explícita.
 
@@ -42,24 +40,24 @@ Después sigue `tasks.md` por dependencia. `[P]` indica posibilidad de trabajo p
 | Sistema | Debian GNU/Linux 13 (trixie), kernel `6.18.50+rpt-rpi-2712`. |
 | Disco de trabajo | NVMe local con ext4. |
 | Usuario | `claw`. |
-| Hermes | Instalación Git en `/home/claw/.hermes/hermes-agent`. |
+| Hermes objetivo | Imagen oficial Docker ARM64 de la revisión fijada; instalación nativa fuera del cambio. |
 | Commit | `22063fc099ec9ad8357d7f8f6e6248a0400680d3`. |
-| Intérprete examinado | `/home/claw/.hermes/hermes-agent/venv/bin/python`, Python `3.11.15`. |
+| Intérprete de destino | Python `3.14.7` en Docker; 3.11.15 permanece como runtime local de pruebas del dominio. |
 | Dependencias examinadas | OpenAI SDK `2.24.0`, python-telegram-bot `22.8`, SQLite `3.53.1` con FTS5 y API de backup disponibles. |
-| Supervisión existente | Servicios systemd de usuario por perfil; preservar los servicios ajenos a Margen. |
+| Supervisión de Margen | s6 en el contenedor y Docker `unless-stopped`; preservar los servicios nativos ajenos. |
 
-El dato inicial de Python 3.14.7 quedó corregido por el diagnóstico del venv. No actualices Python ni Hermes como parte implícita de Margen. El commit es la referencia de compatibilidad; no deduzcas el canal del proceso activo de una etiqueta de `git describe`.
+El venv nativo diagnosticado usa Python 3.11.15, pero el destino Docker aprobado y ensayado usa 3.14.7. No actualices Python ni Hermes como parte implícita de Margen. El commit es la referencia de compatibilidad; no deduzcas el canal del proceso activo de una etiqueta de `git describe`.
 
 ### 4. Arquitectura y decisiones cerradas
 
 - Perfil `margen`, identidad propia y bot de Telegram exclusivo, en conversación privada y con acceso limitado al usuario. Configurar credenciales e IDs localmente al desplegar, sin solicitarlos en informes ni incluirlos en Git.
 - Plugin Python con dominio determinista, persistencia transaccional y adaptador nativo de Telegram registrado mediante interfaces públicas de Hermes. Verificar autenticación antes de acceder al dominio, IDs originales y ausencia de doble despacho; no parchear funciones privadas.
-- SQLite propia, separada de las bases internas de Hermes y del paquete actualizable. Ruta propuesta para el perfil: `/home/claw/.hermes/profiles/margen/plugin-data/margen/data.db`, resuelta y comprobada con el mecanismo de datos del perfil.
+- SQLite propia, separada de las bases internas de Hermes y del paquete actualizable. Ruta propuesta para el perfil: `/opt/data/profiles/margen/plugin-data/margen/data.db`, resuelta y comprobada con el mecanismo de datos del perfil.
 - Telegram es la interfaz. No construir web React, API FastAPI ni servidor MongoDB: el plan adapta el contexto genérico de Grady a este uso personal.
 - Resúmenes breves y detallados con OpenRouter, modelo explícito **`anthropic/claude-haiku-5.5`**. Las notas necesarias para resumir salen al proveedor; no gestionar ni refrescar credenciales directamente. No cambiar automáticamente a otros modelos.
 - Búsqueda completamente local con **`intfloat/multilingual-e5-small`**, SQLite FTS5, vectores de 384 dimensiones y similitud/fusión de posiciones. Propuesta de ejecución ONNX Runtime CPU; verificar disponibilidad del modelo en el envoltorio y, si hace falta, preparar una conversión reproducible. Fijar versiones y hashes al resolver dependencias.
 - Usar los prefijos de recuperación del modelo, fragmentar notas largas y agrupar resultados por nota. Descargar artefactos durante la preparación; después `/buscar` y `/mas` deben funcionar sin red y no enviar notas, consultas ni vectores a servicios externos.
-- Unidad dedicada de usuario propuesta: `hermes-gateway-margen.service`, con reinicio tras fallo y arranque persistente. Verificar lingering y el intérprete efectivo antes de habilitarla. No tocar otros perfiles ni sus tokens.
+- Contenedor `margen`, gateway compartido bajo s6, Docker `unless-stopped` y volumen externo conservado. Comprobar el daemon al iniciar el anfitrión; no tocar otros perfiles ni sus tokens.
 
 ### 5. Contrato de conversación y comandos
 
@@ -144,7 +142,7 @@ Implementa el núcleo bajo `plugins/margen/margen/`, la entrada de plugin en `pl
 | CC-03 | Todas las referencias emitidas en la evaluación recuperan la nota correcta; informar si fue eliminada posteriormente. |
 | CC-04 | Reintentos, fallos y concurrencia no provocan notas duplicadas por reentrega, confirmaciones falsas ni cambios de notas ajenas. |
 
-Comprueba además búsqueda sin red tras la descarga del modelo, autorización, respuestas largas, archivo Markdown, persistencia del activo y pendientes, reinicio del gateway y arranque de la unidad. Las pruebas reales de Haiku y Telegram son distintas de mocks y pruebas estáticas.
+Comprueba además búsqueda sin red tras la descarga del modelo, autorización, respuestas largas, archivo Markdown, persistencia del activo y pendientes, reinicio del gateway y arranque persistente del contenedor. Las pruebas reales de Haiku y Telegram son distintas de mocks y pruebas estáticas.
 
 ### 10. Forma de informar y finalizar
 
@@ -170,3 +168,7 @@ Al finalizar, entrega un paquete reproducible, instrucciones de operación/rever
 | Versión | Fecha | Estado | Cambio |
 | --- | --- | --- | --- |
 | 1.0.0 | 2026-10-18 | Aprobado | el usuario aprueba el Handoff; paquete de especificaciones completo, implementación no iniciada. |
+
+## Actualización operativa 1.1
+
+La aprobación de Docker sustituye cualquier instrucción nativa de despliegue del handoff original. No instalar la unidad histórica por perfil ni cambiar Hermes nativo. Usar exclusivamente la ruta de promoción de `PRODUCTION.md`; las instrucciones de inicialización anteriores corresponden al desarrollo ya ejecutado.

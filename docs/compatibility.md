@@ -1,6 +1,6 @@
 # Contrato Hermes / Telegram
 
-Objetivo: Hermes `22063fc099ec9ad8357d7f8f6e6248a0400680d3`, Python 3.11.15, python-telegram-bot 22.8. Se examinó el archivo público de esa revisión sin importar ni arrancar el agente. No se modifican fuentes de Hermes.
+Objetivo: Hermes `22063fc099ec9ad8357d7f8f6e6248a0400680d3` en Docker ARM64/Python 3.14.7, python-telegram-bot 22.8; pruebas locales del dominio en Python 3.11.15. Se examinó el archivo público de esa revisión sin importar ni arrancar el agente. No se modifican fuentes de Hermes.
 
 | Interfaz pública examinada | Uso |
 | --- | --- |
@@ -15,7 +15,7 @@ El manejador nativo conserva `bot.id`, `user.id`, `chat.id` y `message.message_i
 
 La revisión examinada no tiene colisiones entre sus nombres/alias nativos y los comandos de Margen. La plantilla usa la clave real de Hermes **`model.default`**, además de `model.provider`.
 
-Las pruebas utilizan objetos `Update` y manejadores reales de PTB 22.8, transporte simulado y un contexto de registro controlado. La comprobación adicional con `HERMES_SOURCE` analiza firmas y colisiones mediante AST. **No equivale a cargar el gateway completo en la Raspberry**: esa prueba y la conexión del bot siguen pendientes en T032/T040.
+Las pruebas utilizan objetos `Update` y manejadores reales de PTB 22.8, transporte simulado y un contexto de registro controlado. La comprobación adicional con `HERMES_SOURCE` analiza firmas y colisiones mediante AST. **Estas pruebas aisladas no equivalen a ejecutar el gateway completo**. Posteriormente el usuario cargó Margen y verificó recorridos del bot en Docker Raspberry; ver `validation.md`. Siguen abiertas las situaciones de contrato/aceptación aún no ensayadas de T032/T040.
 
 ```bash
 HERMES_SOURCE=/ruta/al/archivo-de-la-revision python -m pytest -q

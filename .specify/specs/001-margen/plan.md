@@ -1,11 +1,24 @@
 # Plan técnico de Margen
 
-- **Versión:** 1.0.0
-- **Estado:** Aprobado por el usuario — fase Plan completada
+- **Versión:** 1.1.0
+- **Estado:** Plan aprobado; revisión operativa Docker autorizada por el usuario
 - **Fecha:** 2026-10-18
 - **Edición pública:** nombres personales e inventario ajeno a Margen omitidos; sin cambios funcionales.
 - **Base funcional:** [spec.md](spec.md), versión 1.0.0 aprobada.
 - **Gobierno:** [constitution.md](../../memory/constitution.md), versión 1.0.0 aprobada.
+
+## Revisión operativa 1.1 — Docker definitivo (registrada el 2026-10-22)
+
+El usuario autoriza mantener Docker como despliegue definitivo después de los ensayos del laboratorio. Constitución y requisitos funcionales permanecen en versión 1.0.0. Esta revisión sustituye las decisiones de instalación y supervisión nativas de 1.0; las referencias al inventario nativo de 2026-10-18 son evidencia histórica, no instrucciones para el despliegue actual.
+
+- Imagen oficial ARM64 construida desde la misma revisión Hermes; runtime verificado en Docker: Python 3.14.7. Python 3.11.15 se conserva como entorno local de pruebas del dominio, no como runtime del gateway definitivo.
+- Gateway compartido `default` bajo s6 que sirve el perfil `margen`. Contenedor estable `margen`, proyecto Compose `margen`, política `unless-stopped`, gracia de apagado 60 s y comprobación de estado del proceso y Telegram. El arranque al iniciar el anfitrión depende de que el daemon Docker esté habilitado.
+- Volumen externo existente `margen-hermes-lab_data`, sobre NVMe; ruta de base dentro del contenedor `/opt/data/profiles/margen/plugin-data/margen/data.db`. Se conservan credenciales, perfil, modelos, dependencias y libros ficticios del laboratorio; no hay borrado ni nuevo bot implícitos.
+- Promoción con copia SQLite verificada y exclusión de instancias concurrentes conocidas; detener el laboratorio antes del definitivo. Reversión de arranque al laboratorio, con el mismo volumen, sin revertir datos o código por accidente.
+- No instalar unidad systemd de usuario por perfil, modificar el venv nativo ni migrar los demás gateways. La unidad ilustrativa anterior queda retirada.
+- La recuperación local ya fue ensayada; la copia externa y las restantes puertas de aceptación siguen pendientes. No se acepta operativamente el producto solo por preparar Compose.
+
+Procedimiento vigente y fuente de comandos: [PRODUCTION.md](../../../deployment/docker/PRODUCTION.md). El resto del documento conserva los contratos y decisiones funcionales aprobados, aplicando estas sustituciones a sus referencias de entorno.
 
 ## 1. Resultado previsto y alcance de este documento
 
@@ -31,7 +44,7 @@ Este documento propone una arquitectura y contratos propios de Margen. El entorn
 | Dependencias examinadas | python-telegram-bot `22.8`, ruamel.yaml `0.18.17`, PyYAML `6.0.3`. |
 | SQLite | `3.53.1`, FTS5 disponible y API de backup presente. Comprobación efectuada en memoria, sin abrir las bases de Hermes. |
 
-El usuario confirma OpenRouter como proveedor y aprueba `anthropic/claude-haiku-5.5` como modelo inicial de resumen. El entorno utiliza unidades systemd de usuario por perfil. Debe preservarse la configuración de los perfiles ajenos a Margen. No se presupone Docker, GPU ni un servicio de inferencia local.
+El usuario confirma OpenRouter como proveedor y aprueba `anthropic/claude-haiku-5.5` como modelo inicial de resumen. El entorno utiliza unidades systemd de usuario por perfil. Debe preservarse la configuración de los perfiles ajenos a Margen. La decisión posterior autoriza Docker para Margen; no se requiere GPU ni inferencia remota para la búsqueda.
 
 ### Resumen público del diagnóstico
 
@@ -76,7 +89,7 @@ La fábrica nativa se documenta con acceso a la `Application` de python-telegram
 
 ```mermaid
 flowchart TD
-    T[Telegram: usuario] --> G[Gateway del perfil Margen]
+    T[Telegram: usuario] --> G[Gateway compartido Docker: perfil Margen]
     G --> A[Adaptador: autorización e identidad del mensaje]
     A --> R[Enrutador y estado de conversación]
     R --> D[Servicios de libros y notas]
@@ -92,7 +105,7 @@ flowchart TD
 ### Perfil y canal
 
 - Perfil denominado `margen`, con identidad e instrucciones propias en `SOUL.md`.
-- Decisión aprobada por el usuario: bot de Telegram propio, asociado exclusivamente al perfil `margen`, con conversación privada y acceso limitado a su usuario. Se ejecutará directamente en la Raspberry Pi mediante la instalación Git existente.
+- Decisión aprobada por el usuario: bot de Telegram propio, asociado exclusivamente al perfil `margen`, con conversación privada y acceso limitado a su usuario. Se ejecutará en Docker ARM64 sobre la Raspberry, con la imagen fijada y el gateway compartido descritos en la revisión 1.1.
 - Autorización por identificadores estables del remitente y del destino; no por nombre visible ni por texto enviado.
 - La identidad numérica del usuario y la credencial del bot se configurarán durante el despliegue por un canal local seguro; no se solicitan ni se guardan en esta especificación. No se compartirán tokens con los bots de otros perfiles.
 - Un único propietario del consumo de actualizaciones del bot. No se arrancará un segundo receptor con el mismo token.
@@ -129,22 +142,15 @@ Ejemplo de coste de una llamada con 10.000 tokens de entrada y 1.500 de salida: 
 
 La base de datos de Margen será distinta de la base interna de Hermes y se ubicará en una ruta de datos persistentes resuelta para el perfil, fuera del paquete actualizable y de este repositorio. No se pondrá una base SQLite activa en una carpeta sincronizada por iCloud o en un almacenamiento compartido entre máquinas. Para un perfil con home `/home/claw/.hermes/profiles/margen`, la ruta propuesta es `/home/claw/.hermes/profiles/margen/plugin-data/margen/data.db`, resuelta mediante el helper documentado de Hermes y comprobada al arrancar.
 
-### Ajustes para Raspberry Pi y Python 3.11
+### Ajustes para Raspberry Pi y runtime Docker
 
-- Usar el entorno Python de la instalación existente, tras verificar el intérprete efectivo del proceso; no sustituir el Python del sistema ni cambiar de versión Hermes como parte implícita del proyecto.
-- Priorizar la biblioteca estándar para dominio, transacciones, normalización y exportación. SQLite 3.53.1, FTS5 y la API de backup han sido comprobados en el venv examinado; verificar que la futura unidad utiliza ese mismo entorno.
-- La búsqueda local está aprobada por el usuario. Evitar PyTorch y una base vectorial externa como requisitos del proceso Hermes; propuesta de inferencia CPU mediante ONNX Runtime. Comprobar los paquetes binarios para ARM64/Python 3.11 y el consumo de memoria sobre los 16 GB nominales antes de fijar las dependencias. No se presupone que estas ya estén instaladas.
-- Mantener embeddings y procesamiento semántico fuera del camino crítico de guardado. Serializar las escrituras y usar transacciones breves; los trabajos de IA no ocuparán la conexión de escritura mientras esperan red.
-- Ubicar la base SQLite en el SSD confirmado y verificar que la ruta efectiva del perfil resuelve a ese soporte. Probar WAL, integridad tras reinicio y comportamiento ante almacenamiento lleno; medir latencia antes de afirmar que cumple CR-01.
+Usar Python 3.14.7 de la imagen probada, con las dependencias del plugin admitidas por PM en el volumen del perfil. Las pruebas locales Python 3.11.15 verifican el dominio; no sustituyen el contrato de Hermes completo. Mantener embeddings fuera del camino de guardado y transacciones breves. Comprobar memoria y latencia reales: el kernel actual descarta el límite de memoria solicitado por Docker.
 
-### Despliegue previsto
+### Despliegue aprobado
 
-- Conservar `/home/claw/.hermes/hermes-agent` como instalación de Hermes y desplegar el paquete de Margen como extensión del perfil, separado del árbol Git del producto.
-- Crear el perfil `margen` sin clonar credenciales ni canales de otros perfiles por defecto. Revisar las opciones reales de la revisión antes de escribir la secuencia de instalación.
-- Proponer una unidad systemd de usuario para Margen, siguiendo la organización existente de servicios por perfil, con habilitación de arranque y verificación de persistencia sin sesión de usuario. Revisar las unidades existentes y el estado de lingering antes de escribir la unidad definitiva; no modificar ni reiniciar los gateways de otros perfiles.
-- La unidad dedicada se denominará `hermes-gateway-margen.service`, con reinicio tras fallo y arranque al iniciar el equipo mediante el gestor de usuario persistente. Validar la disponibilidad de este gestor al arrancar sin sesión; si requiere habilitar lingering para `claw`, registrar esa actuación en las instrucciones de despliegue en lugar de darla por realizada. Mantener un único proceso propietario del gateway de Margen.
-- La unidad o configuración final deberá fijar usuario `claw`, entorno Python, home del perfil y permisos de datos, sin publicar secretos en el repositorio.
-- El diagnóstico inicial será de solo lectura. La puesta en marcha se probará con notas ficticias y un bot/perfil de prueba antes de habilitar la captura personal.
+Aplicar `deployment/docker/compose.production.yaml` y `scripts/deploy-docker-margen.py` según `PRODUCTION.md`. La base activa y E5 permanecen en el NVMe dentro del volumen externo. El script verifica que la imagen coincide con la del laboratorio y conserva ese contenedor para reversión. Los libros de prueba se mantienen sin borrado automático.
+
+No modificar la instalación Git nativa. No crear un gateway separado para el perfil `margen`: la revisión Hermes objetivo lo rechaza. La configuración definitiva conserva el entrypoint oficial, arranca el compartido `default` bajo s6 y usa Docker para persistencia del contenedor. No se publica ningún puerto ni se añade acceso del contenedor al daemon Docker.
 
 ## 4. Contratos internos
 
@@ -350,7 +356,7 @@ Para recoger los datos accesibles del anfitrión se ha creado [diagnostico-marge
 
 1. **Entorno diagnosticado:** Raspberry Pi 5 ARM64, Debian 13, 16 GB nominales de RAM, NVMe/ext4, Hermes `22063fc099ec9ad8357d7f8f6e6248a0400680d3`, venv Python 3.11.15 y SQLite 3.53.1 con FTS5. Faltan las pruebas de funcionamiento de Margen, no repetir estas preguntas de inventario.
 2. Validar los mecanismos de entrada y entrega mediante el manejador nativo documentado, en particular autorización, identidad de mensajes, no duplicación de despacho y archivos.
-3. **Supervisión diseñada:** unidad systemd de usuario dedicada y arranque persistente; comprobar el gestor de usuario y lingering antes de habilitarla. **Canal aprobado:** bot propio de Margen, limitado al usuario; los identificadores y credenciales se configurarán al desplegar. La base activa propuesta reside en el NVMe ext4. La incidencia del montaje externo queda fuera de esta fase por indicación del usuario y solo condiciona la validación real del backup.
+3. **Supervisión vigente (1.1):** Docker `unless-stopped` y s6 para el gateway compartido; comprobar que el daemon Docker esté habilitado y el canal operativo tras el cambio. **Canal aprobado:** bot propio de Margen, limitado al usuario; los identificadores y credenciales se configurarán al desplegar. La base activa propuesta reside en el NVMe ext4. La incidencia del montaje externo queda fuera de esta fase por indicación del usuario y solo condiciona la validación real del backup.
 4. **Inferencia aprobada:** resúmenes con OpenRouter y `anthropic/claude-haiku-5.5`; búsqueda semántica local con `intfloat/multilingual-e5-small`. ONNX Runtime CPU y FTS5 forman la propuesta de ejecución; fijar versiones y artefactos tras comprobar compatibilidad ARM64, y validar los criterios de calidad durante la implementación.
 5. **Convivencia aprobada:** resolver o cancelar la selección/confirmación pendiente antes de abrir otra; `/nota texto` sigue disponible. **Backup diseñado:** instantánea consistente actual, manifiesto, comprobación del destino y restauración en cuarentena. Verificar cobertura del script externo y documentar su retención al integrar; no se cambia ni se repara ahora la infraestructura de backup.
 
@@ -372,3 +378,4 @@ Estas comprobaciones no se consideran pruebas superadas ni requieren ejecutar un
 | Versión | Fecha | Estado | Cambio |
 | --- | --- | --- | --- |
 | 1.0.0 | 2026-10-18 | Aprobado | el usuario aprueba el plan técnico consolidado a partir del borrador 0.8.0, sin cambios en sus decisiones. |
+| 1.1.0 | 2026-10-22 | Cambio autorizado por el usuario y registrado | Docker definitivo, runtime 3.14.7, gateway compartido y conservación del volumen probado; aceptación de destino pendiente. |

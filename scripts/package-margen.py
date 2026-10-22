@@ -17,8 +17,8 @@ files=sorted({p for p in files if '__pycache__' not in p.parts
 allowed={'.py','.sql','.yaml','.md','.json','.sh','.lock','.example','.gitignore','.toml'}
 files=[p for p in files if p.suffix in allowed or p.name=='.gitignore']
 manifest={'version':'0.1.0','schema':1,'hermes_revision':'22063fc099ec9ad8357d7f8f6e6248a0400680d3',
-          'python_target':'3.11.15','platform_target':'Linux aarch64 Debian 13',
-          'runtime_validation':'See docs/validation.md; target deployment pending',
+          'python_target':'3.14.7','python_domain_tests':'3.11.15','platform_target':'Linux aarch64 Debian 13',
+          'runtime_validation':'Raspberry Docker lab verified; definitive promotion and full acceptance pending; see docs/validation.md',
           'files':{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}}
 data=json.dumps(manifest,indent=2).encode()+b'\n'
 (ROOT/'docs/release-manifest.json').write_bytes(data)
