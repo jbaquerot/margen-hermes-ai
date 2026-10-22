@@ -172,3 +172,9 @@ La puesta en marcha definitiva queda comprobada en este recorrido. Esto no cierr
 Ante la petición de retirar los libros de prueba, se comprobó que los comandos aprobados no incluyen borrado de libros completos. Se añade una utilidad de mantenimiento, sin nuevo comando Telegram, limitada a las tres parejas exactas de título/autor del ensayo. Vista previa de solo lectura, confirmación vinculada al contenido revisado, gateway s6 parado, rechazo de operaciones pendientes, snapshot verificado antes de mutar y limpieza transaccional. Los otros libros, sus notas y activo se conservan; si se retira el libro activo queda sin activo. Las copias y mensajes anteriores no se eliminan.
 
 **79 pruebas locales pasan**, incluidas siete sobre vista previa sin textos privados, conservación de datos reales, confirmación invalidada por cambios, fallo de backup, trabajos/entregas pendientes y eliminación del activo ficticio. Ejecución real de la vista previa y del borrado pendientes del usuario; no se ha modificado la base de Raspberry desde esta sesión.
+
+## Retirada de los libros ficticios confirmada en Telegram (2026-10-22)
+
+La vista previa aportada por el usuario identificó exactamente los tres libros de ensayo, con 9 notas, 10 versiones y 11 resúmenes en total. Se facilitó la aplicación con la confirmación de esa vista previa, parada del gateway, espera acotada a estado down y reinicio del contenedor al salir. Después el usuario consultó el bot y recibió `No hay libros registrados.` y `Sin libro activo.`.
+
+El resultado visible confirma que los libros ficticios ya no figuran en el catálogo y no se eligió otro activo de forma implícita. El usuario no compartió aquí la salida completa de la aplicación; no se presenta este listado como inspección de todas las tablas ni garantía de borrado físico. Las copias locales, cuarentenas y mensajes antiguos pueden conservar contenido de prueba, conforme al alcance comunicado.

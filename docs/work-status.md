@@ -28,4 +28,4 @@ La base de evidencia está en `validation.md`; las pruebas de calidad, en `summa
 
 ## Retirada de datos ficticios
 
-Se preparó una utilidad de mantenimiento limitada a los tres libros de prueba, con vista previa, copia y confirmación explícita; ver `operations.md`. Su ejecución real sigue pendiente. No se incorporó un comando general de borrado de libros ni se cambiaron los requisitos de Telegram.
+Se preparó una utilidad de mantenimiento limitada a los tres libros de prueba, con vista previa, copia y confirmación explícita; ver `operations.md`. El usuario revisó la vista previa y, tras las instrucciones de aplicación, confirmó en Telegram que no hay libros registrados ni activo (2026-10-22). Las copias y mensajes antiguos pueden conservar datos de prueba. No se incorporó un comando general de borrado de libros ni se cambiaron los requisitos de Telegram.
