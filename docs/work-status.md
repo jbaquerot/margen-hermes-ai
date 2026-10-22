@@ -12,12 +12,12 @@ Revisión: 2026-10-22. **El trabajo completo no está terminado.** La implementa
 | Autorización | Restricciones configuradas y pruebas automatizadas. | Ensayo real de otra cuenta: usuario no dispone de ella. |
 | Rendimiento | Aviso real de progreso; mediciones locales del dominio. | Latencia Telegram medida y captura durante inferencia real (CR-01/02). |
 | Recuperación | Snapshot y restauración en cuarentena verificadas en Raspberry, con base activa conservada. | Copia externa al SSD y recuperación ante pérdida del NVMe; no se modifica su montaje. |
-| Docker definitivo | Preflight correcto, daemon enabled, copia previa verificada y promoción ejecutada en Raspberry; contenedor `margen` healthy en 30,8 s. | Recorrido Telegram del servicio definitivo y arranque real tras reinicio del anfitrión (no ejecutado). |
+| Docker definitivo | Preflight, daemon enabled, copia previa, promoción y estado healthy; Telegram confirma libros, activo, nota y resúmenes conservados, y nueva captura. | Arranque real tras reinicio del anfitrión (no ejecutado) y aceptación ampliada. |
 
 ## Trabajo inmediato
 
-1. Verificar en Telegram `/libros`, una nota existente, `/resumenes` y una captura nueva del servicio definitivo. La promoción ya se ejecutó; no repetir `deploy`.
-2. Registrar esos resultados y completar las puertas de aceptación aún abiertas. No reiniciar el anfitrión como prueba implícita de Docker.
+1. La puesta en marcha y su recorrido básico en Telegram están verificados; no repetir la promoción ni borrar los datos de prueba de forma implícita.
+2. Completar las puertas de aceptación aún abiertas. No reiniciar el anfitrión como prueba implícita de Docker.
 3. Mantener explícitos los límites de concurrencia real, rendimiento, contexto extenso y copia externa antes de cerrar T040/T041.
 
 ## Tareas que siguen abiertas

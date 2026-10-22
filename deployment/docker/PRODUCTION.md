@@ -1,6 +1,6 @@
 # Margen en Docker: despliegue definitivo
 
-Decisión autorizada por el usuario; documentada el 2026-10-22. Preparación comprobada localmente y promoción ejecutada en Raspberry: snapshot verificado y contenedor `margen` healthy en 30,8 s; recorrido Telegram posterior pendiente. No equivale a cerrar toda la aceptación funcional y operativa.
+Decisión autorizada por el usuario; documentada el 2026-10-22. Preparación comprobada localmente y promoción ejecutada en Raspberry: snapshot verificado y contenedor `margen` healthy en 30,8 s; recorrido Telegram posterior confirmado: libros, activo, consultas y nueva captura. No equivale a cerrar toda la aceptación funcional y operativa.
 
 ## Configuración
 
@@ -82,4 +82,4 @@ Detiene el definitivo antes de arrancar el laboratorio y conserva el volumen. Re
 
 ## Aceptación pendiente
 
-El cambio ya se ejecutó correctamente en la Raspberry. Quedan su verificación en Telegram, mediciones de latencia, concurrencia real durante inferencia, contexto extenso/paginación y cierre de la rúbrica completa. El rechazo de otra identidad está probado automáticamente pero no en otra cuenta Telegram disponible. No se declara uso personal con recuperación externa validada mientras esa copia externa no esté comprobada.
+El cambio ya se ejecutó correctamente en la Raspberry. El recorrido básico Telegram también está confirmado. Quedan mediciones de latencia, concurrencia real durante inferencia, contexto extenso/paginación y cierre de la rúbrica completa. El rechazo de otra identidad está probado automáticamente pero no en otra cuenta Telegram disponible. No se declara uso personal con recuperación externa validada mientras esa copia externa no esté comprobada.
